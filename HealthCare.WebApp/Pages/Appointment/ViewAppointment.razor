@@ -1,6 +1,8 @@
 ﻿@page "/appointment"
-@using HealthCare.Core.Models
 @inject AppointmentService appointmentService
+@inject IJSRuntime JSRuntime
+@using HealthCare.Core.Models
+
 
 <h3>View Appointment Details</h3>
 
@@ -25,6 +27,8 @@ else
     <p>No appointment details found.</p>
 }
 
+<div id='calendar'></div>
+
 @code {
     private string appointmentId;
     private Appointment appointmentDetails;
@@ -40,6 +44,14 @@ else
         {
             // Handle invalid input
             appointmentDetails = null;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("initializeCalendar");
         }
     }
 }
