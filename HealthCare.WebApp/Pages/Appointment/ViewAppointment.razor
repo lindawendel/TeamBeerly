@@ -1,4 +1,5 @@
 ﻿@*the AppointmentService is added in program.cs *@
+@using HealthCare.Core.Models
 @inject AppointmentService appointmentService
 @*sets the component as a route, nav is changes to this route => see NavMenu*@
 @page "/appointment"
@@ -16,11 +17,15 @@
 }
 
 @code {
+
+    //not done yet, working on it
+
+
     private string appointmentId;
-    private AppointmentService.AppointmentDetails appointmentDetails;
+     private AppointmentService.AppointmentDetails appointmentDetails;
 
     private void LoadAppointment()
     {
-        appointmentDetails = appointmentService.GetAppointmentDetails(appointmentId);
+         appointmentDetails = appointmentService.GetAppointmentDetails(appointmentId);
     }
 }

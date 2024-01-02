@@ -1,25 +1,34 @@
-﻿@*the AppointmentService is added in program.cs *@
+﻿@page "/feedback"
+@using HealthCare.Core.Models
 @inject FeedbackService feedbackService
-@*sets the component as a route, nav is changes to this route => see NavMenu*@
-@page "/feedback"
 
 <h3>Leave Feedback</h3>
-<input @bind="userFeedback" />
+<input @bind="feedback.Title" placeholder="Feedback Title" />
+<textarea @bind="feedback.Comment" placeholder="Feedback Comment"></textarea>
 <button @onclick="SubmitFeedback">Submit Feedback</button>
 
 <h3 class="feedback">All Feedback</h3>
 @foreach (var feedback in feedbackService.GetAllFeedback())
 {
-    <p>@feedback</p>
+    <div>
+        <p>Title: @feedback.Title</p>
+        <p>Comment: @feedback.Comment</p>
+        <p>Time: @feedback.Time</p>
+    </div>
 }
 
 @code {
-    private string userFeedback;
+    //rename class or pages cuz nameed pages and classes collide
+    public HealthCare.Core.Models.Feedback feedback = new HealthCare.Core.Models.Feedback();
 
-    private void SubmitFeedback()
+    public void SubmitFeedback()
     {
-        feedbackService.SaveFeedback(userFeedback);
-        // reset the input field
-        userFeedback = string.Empty; 
+        // Set the time before saving
+        feedback.Time = DateTime.Now;
+
+        feedbackService.SaveFeedback(feedback);
+
+        // reset the input fields
+        feedback = new HealthCare.Core.Models.Feedback();
     }
 }
