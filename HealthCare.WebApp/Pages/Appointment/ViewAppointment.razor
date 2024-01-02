@@ -1,7 +1,6 @@
-﻿@*the AppointmentService is added in program.cs *@
+﻿@page "/appointment"
+@using HealthCare.Core.Models
 @inject AppointmentService appointmentService
-@*sets the component as a route, nav is changes to this route => see NavMenu*@
-@page "/appointment"
 
 <h3>View Appointment Details</h3>
 
@@ -12,15 +11,35 @@
 
 @if (appointmentDetails != null)
 {
-    <p>@appointmentDetails.Details</p>
+    <div>
+        <p>ID: @appointmentDetails.Id</p>
+        <p>Patient: @appointmentDetails.Patient.Name</p>
+        <p>Caregiver: @appointmentDetails.Caregiver.Name</p>
+        <p>Time: @appointmentDetails.Time</p>
+        <p>Service: @appointmentDetails.Service</p>
+        <p>Description: @appointmentDetails.Description</p>
+    </div>
+}
+else
+{
+    <p>No appointment details found.</p>
 }
 
 @code {
     private string appointmentId;
-    private AppointmentService.AppointmentDetails appointmentDetails;
+    private Appointment appointmentDetails;
 
     private void LoadAppointment()
     {
-        appointmentDetails = appointmentService.GetAppointmentDetails(appointmentId);
+        Guid parsedId;
+        if (Guid.TryParse(appointmentId, out parsedId))
+        {
+            appointmentDetails = appointmentService.GetAppointment(parsedId);
+        }
+        else
+        {
+            // Handle invalid input
+            appointmentDetails = null;
+        }
     }
 }
