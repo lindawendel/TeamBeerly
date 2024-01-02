@@ -1,7 +1,6 @@
-﻿@*the AppointmentService is added in program.cs *@
+﻿@page "/appointment"
 @inject AppointmentService appointmentService
-@*sets the component as a route, nav is changes to this route => see NavMenu*@
-@page "/appointment"
+@inject IJSRuntime JSRuntime
 
 <h3>View Appointment Details</h3>
 
@@ -15,6 +14,8 @@
     <p>@appointmentDetails.Details</p>
 }
 
+<div id='calendar'></div>
+
 @code {
     private string appointmentId;
     private AppointmentService.AppointmentDetails appointmentDetails;
@@ -22,5 +23,13 @@
     private void LoadAppointment()
     {
         appointmentDetails = appointmentService.GetAppointmentDetails(appointmentId);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("initializeCalendar");
+        }
     }
 }
