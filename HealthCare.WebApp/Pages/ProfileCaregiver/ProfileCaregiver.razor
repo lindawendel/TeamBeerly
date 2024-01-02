@@ -1,0 +1,40 @@
+﻿@page "/caregiver/profile"
+
+<h3>Profile</h3>
+
+<div>
+    <label>First Name:</label>
+    <input @bind="caregiver.Name" />
+</div>
+
+<div>
+    <label>Last Name:</label>
+    @* <input @bind="caregiver.LastName" /> *@
+</div>
+
+<div>
+    <label>Date of Birth:</label>
+    @* <input @bind="caregiver.DateOfBirth" /> *@
+</div>
+
+<div>
+    <label>Phone Number:</label>
+    @* <input @bind="caregiver.PhoneNumber" /> *@
+</div>
+
+<div>
+    <label>Email:</label>
+    <input @bind="caregiver.Email" />
+</div>
+
+<button @onclick="SaveCaregiverProfile">Save</button>
+
+@code {
+    @using HealthCare.Core.Models
+
+    private Caregiver caregiver = new Caregiver();
+
+    private void SaveCaregiverProfile()
+    {
+    }
+}
