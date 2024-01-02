@@ -4,33 +4,33 @@
     if (calendarEl) {
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'timeGridWeek',
-            firstDay: 1, // Start the week on Monday
+            firstDay: 1,
             slotLabelFormat: {
                 hour: '2-digit',
                 minute: '2-digit',
-                hour12: false // Use 24-hour format
+                hour12: false
             },
             eventTimeFormat: {
                 hour: '2-digit',
                 minute: '2-digit',
-                hour12: false // Use 24-hour format
+                hour12: false
             },
             businessHours: {
-                daysOfWeek: [1, 2, 3, 4, 5], // Monday to Friday
-                startTime: '09:00', // Start time for business hours
-                endTime: '15:00',   // End time for business hours
+                daysOfWeek: [1, 2, 3, 4, 5],
+                startTime: '09:00',
+                endTime: '15:00',
             },
-            slotMinTime: '09:00', // Calendar starts at 9am
-            slotMaxTime: '15:00', // Calendar ends at 3pm
-            slotDuration: '01:00:00', // 1 hour slots
+            slotMinTime: '09:00',
+            slotMaxTime: '15:00',
+            slotDuration: '01:00:00',
             selectable: true,
             selectAllow: function (selectInfo) {
-                // Disallow selection on weekends
+                
                 var dayOfWeek = selectInfo.start.getDay();
                 return dayOfWeek !== 0 && dayOfWeek !== 6;
             },
             select: function (info) {
-                // Ensure the end time is exactly one hour after the start time
+                
                 info.end = new Date(info.start.getTime() + 60 * 60 * 1000);
 
                 var title = prompt('Event Title:');
@@ -53,7 +53,7 @@
             dayMaxEvents: true,
             locale: 'en',
             events: [
-                // If you have existing events, they can be added here.
+                
             ],
             headerToolbar: {
                 left: 'prev,next today',
@@ -62,7 +62,7 @@
             },
 
             height: 650
-            //aspectRatio: 2
+            
         });
         calendar.render();
         console.log("Calendar rendered");
