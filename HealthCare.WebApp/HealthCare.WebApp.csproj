@@ -13,10 +13,6 @@
     <None Remove="Pages\Appointment\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Pages\Feedback\" />
-    <Folder Include="Pages\Appointment\" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>

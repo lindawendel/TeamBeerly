@@ -1,6 +1,8 @@
 ﻿@page "/appointment"
 @inject AppointmentService appointmentService
 @inject IJSRuntime JSRuntime
+@using HealthCare.Core.Models
+
 
 <h3>View Appointment Details</h3>
 
@@ -11,18 +13,38 @@
 
 @if (appointmentDetails != null)
 {
-    <p>@appointmentDetails.Details</p>
+    <div>
+        <p>ID: @appointmentDetails.Id</p>
+        <p>Patient: @appointmentDetails.Patient.Name</p>
+        <p>Caregiver: @appointmentDetails.Caregiver.Name</p>
+        <p>Time: @appointmentDetails.Time</p>
+        <p>Service: @appointmentDetails.Service</p>
+        <p>Description: @appointmentDetails.Description</p>
+    </div>
+}
+else
+{
+    <p>No appointment details found.</p>
 }
 
 <div id='calendar'></div>
 
 @code {
     private string appointmentId;
-    private AppointmentService.AppointmentDetails appointmentDetails;
+    private Appointment appointmentDetails;
 
     private void LoadAppointment()
     {
-        appointmentDetails = appointmentService.GetAppointmentDetails(appointmentId);
+        Guid parsedId;
+        if (Guid.TryParse(appointmentId, out parsedId))
+        {
+            appointmentDetails = appointmentService.GetAppointment(parsedId);
+        }
+        else
+        {
+            // Handle invalid input
+            appointmentDetails = null;
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
