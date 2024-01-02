@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HealthCare.WebApp", "Health
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HealthCare.Core", "HealthCare.Core\HealthCare.Core.csproj", "{3E6893A6-B70C-40C3-B131-A6611030B855}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthCareTests", "HealthCareTests\HealthCareTests.csproj", "{EB798117-3AF0-4779-9B64-4C83C049AD61}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HealthCareTests", "HealthCareTests\HealthCareTests.csproj", "{EB798117-3AF0-4779-9B64-4C83C049AD61}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
