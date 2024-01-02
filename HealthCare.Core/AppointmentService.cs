@@ -1,15 +1,19 @@
 ﻿using HealthCare.Core.Models;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace HealthCare.Core
 {
     public class AppointmentService
     {
-
         public List<Appointment> Appointments { get; private set; }
-        public Appointment GetAppointments(Guid appointmentId)
+
+        public Appointment GetAppointment(Guid appointmentId)
         {
             return Appointments.FirstOrDefault(a => a.Id == appointmentId);
         }
+
         public AppointmentService()
         {
             InitializeAppointments();
@@ -18,29 +22,30 @@ namespace HealthCare.Core
         private void InitializeAppointments()
         {
             Appointments = new List<Appointment>
-        {
-            new Appointment
             {
-                Id = Guid.NewGuid(),
-                Patient = new Patient { Id = Guid.Parse("100"), Name = "Patient 100" },
-                Caregiver = new Caregiver { Id = Guid.NewGuid(), Name = "Dr. Smith" },
-                Time = DateTime.Now.AddHours(1),
-                Service = "General Checkup",
-                Description = "Appointment with Dr. Smith"
-            },
-            new Appointment
-            {
-                Id = Guid.NewGuid(),
-                Patient = new Patient { Id = Guid.Parse("101"), Name = "Patient 101" },
-                Caregiver = new Caregiver { Id = Guid.NewGuid(), Name = "Dr. Johnson" },
-                Time = DateTime.Now.AddHours(2),
-                Service = "Dental Checkup",
-                Description = "Appointment with Dr. Johnson"
-            }
-
-
-        };
+                new Appointment
+                {
+                    Id = Guid.NewGuid(),
+                    Patient = new Patient { Id = Guid.Parse("100"), Name = "Patient 100" },
+                    Caregiver = new Caregiver { Id = Guid.NewGuid(), Name = "Dr. Smith" },
+                    Time = DateTime.Now.AddHours(1),
+                    Service = "General Checkup",
+                    Description = "Appointment with Dr. Smith"
+                },
+                new Appointment
+                {
+                    Id = Guid.NewGuid(),
+                    Patient = new Patient { Id = Guid.Parse("101"), Name = "Patient 101" },
+                    Caregiver = new Caregiver { Id = Guid.NewGuid(), Name = "Dr. Johnson" },
+                    Time = DateTime.Now.AddHours(2),
+                    Service = "Dental Checkup",
+                    Description = "Appointment with Dr. Johnson"
+                }
+            };
         }
+    }
+}
+
 
         /*        private List<AppointmentDetails> appointments;
 
@@ -65,7 +70,7 @@ namespace HealthCare.Core
                     public string Id { get; set; }
                     public string PatientId { get; set; }
                     public string Details { get; set; }
-                }*/
+                }
     }
 }
-
+*/
