@@ -1,6 +1,5 @@
 ﻿using HealthCare.Core.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace HealthCare.WebApp.Data
 {
