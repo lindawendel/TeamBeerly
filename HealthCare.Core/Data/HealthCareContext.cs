@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 
-namespace HealthCare.WebApp.Data
+namespace HealthCare.Core.Data
 {
     public class HealthCareContext : DbContext
     {

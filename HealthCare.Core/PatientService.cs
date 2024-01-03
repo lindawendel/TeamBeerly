@@ -1,4 +1,5 @@
 ﻿using HealthCare.Core.Models;
+using HealthCare.Core.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,37 +14,55 @@ namespace HealthCare.Core
     public class PatientService
     {
 
-        //private readonly HealthCareContext _dbContext;
+        private readonly HealthCareContext _dbContext;
 
-        //public PatientService(HealthCareContext dbContext)
-        //{
-        //    _dbContext = dbContext;
-        //}
-
-
-        //public List<Patient> GetAllPatients()
-        //{
-        //    return _dbContext.Patients.ToList();
-        //}
-
-        private List<Patient> patients = new List<Patient>();
-        public PatientService()
+        public PatientService(HealthCareContext dbContext)
         {
-            patients.Add(new Patient { Id = Guid.NewGuid(), Name = "Hans Hansson", Email = "hans.h@example.com" });
-            patients.Add(new Patient { Id = Guid.NewGuid(), Name = "Axel Fingersson", Email = "axel.finger@example.com" });
-            patients.Add(new Patient { Id = Guid.NewGuid(), Name = "Astrid Lindgren", Email = "a.lindgren@example.com" });
+            _dbContext = dbContext;
         }
 
-        public IEnumerable<Patient> GetAllPatients()
+        public List<Patient> GetAllPatients()
         {
-            return patients;
+            return _dbContext.Patients.ToList();
         }
 
-        public Patient GetPatient(Guid id)
+        public Patient GetPatient(Guid id) 
         {
-            Patient result = patients.FirstOrDefault(x => x.Id == id);
+            Patient result = _dbContext.Patients.FirstOrDefault(x => x.Id == id);
             return result;
         }
+
+        public Patient DuringDevFindOnePatient()
+        {
+            if (_dbContext.Patients != null)
+            {
+                return _dbContext.Patients.FirstOrDefault();
+            }
+            else
+            {
+                throw new Exception();
+            }
+        }
+
+
+        //private List<Patient> patients = new List<Patient>();
+        //public PatientService()
+        //{
+        //    patients.Add(new Patient { Id = Guid.NewGuid(), Name = "Hans Hansson", Email = "hans.h@example.com" });
+        //    patients.Add(new Patient { Id = Guid.NewGuid(), Name = "Axel Fingersson", Email = "axel.finger@example.com" });
+        //    patients.Add(new Patient { Id = Guid.NewGuid(), Name = "Astrid Lindgren", Email = "a.lindgren@example.com" });
+        //}
+
+        //public IEnumerable<Patient> GetAllPatients()
+        //{
+        //    return patients;
+        //}
+
+        //public Patient GetPatient(Guid id)
+        //{
+        //    Patient result = patients.FirstOrDefault(x => x.Id == id);
+        //    return result;
+        //}
 
     }
 }

@@ -1,4 +1,4 @@
-﻿using HealthCare.WebApp.Data;
+﻿using HealthCare.Core.Data;
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,23 +38,7 @@ public static class InMemoryDbInitializer
                     dbContext.SaveChanges();
                 }
 
-                foreach (var p  in dbContext.Patients) 
-                {
-                    Console.WriteLine(p.Id + " " + p.Name + " " + p.Email);
-                }
-
-                foreach (var c in dbContext.Caregivers)
-                {
-                    Console.WriteLine(c.Id + " " + c.Name + " " + c.Email);
-                }
-            }
-
-            
-        }
-
-    }
-}
-
+                
                 if (!dbContext.Bookings.Any())
                 {
 
@@ -64,7 +48,15 @@ public static class InMemoryDbInitializer
                 dbContext.SaveChanges();
                 }
 
+                foreach (var p in dbContext.Patients)
+                {
+                    Console.WriteLine(p.Id + " " + p.Name + " " + p.Email);
+                }
 
+                foreach (var c in dbContext.Caregivers)
+                {
+                    Console.WriteLine(c.Id + " " + c.Name + " " + c.Email);
+                }
 
 
             }

@@ -1,17 +1,41 @@
 ﻿@page "/my_page"
+@using HealthCare.Core.Models;
+@inject PatientService patientService
 
 <h3>My page</h3>
 
-<h3 class="feedback">All Feedback</h3>
-@foreach (var feedback in feedbackService.GetAllFeedback())
+<h3 class="MyPage">Personal</h3>
+
+
+
+@* @foreach (var patient in patientService.GetAllPatients())
 {
     <div>
-        <p>Title: @feedback.Title</p>
-        <p>Comment: @feedback.Comment</p>
-        <p>Time: @feedback.Time</p>
+        <p>Title: @patient.Id</p>
+        <p>Comment: @patient.Name</p>
+        <p>Time: @patient.Email</p>
     </div>
-}
+} *@
+
+
+    <div>
+        <p>Title: @patientService.DuringDevFindOnePatient().Id</p>
+        <p>Comment: @patientService.DuringDevFindOnePatient().Name</p>
+        <p>Time: @patientService.DuringDevFindOnePatient().Email</p>
+    </div>
+
+
 
 @code {
 
+    public HealthCare.Core.Models.Patient patient = new HealthCare.Core.Models.Patient();
+
+    // private Patient patientDetails;
+
+    // private void LoadPatient()
+    // {
+
+    //     patientDetails = patientService.DuringDevFindOnePatient();
+
+    // }
 }
