@@ -2,6 +2,16 @@
 
 <h3>My page</h3>
 
+<h3 class="feedback">All Feedback</h3>
+@foreach (var feedback in feedbackService.GetAllFeedback())
+{
+    <div>
+        <p>Title: @feedback.Title</p>
+        <p>Comment: @feedback.Comment</p>
+        <p>Time: @feedback.Time</p>
+    </div>
+}
+
 @code {
 
 }
