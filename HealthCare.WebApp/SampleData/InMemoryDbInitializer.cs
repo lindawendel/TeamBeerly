@@ -1,27 +1,33 @@
-﻿using HealthCare.Core.Models;
-using HealthCare.WebApp.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using HealthCare.WebApp.Data;
 
-namespace HealthCare.WebApp.SampleData
+using System;
+using Microsoft.Extensions.DependencyInjection;
+using HealthCare.Core.Models;
+
+public static class InMemoryDbInitializer
 {
-    public static class InMemoryDbInitializer
+    public static void Initialize(IServiceProvider serviceProvider)
     {
-        public static void Initialize(IServiceProvider serviceProvider)
+        using (var scope = serviceProvider.CreateScope())
         {
-            using (var scope = serviceProvider.CreateScope())
+            var dbContext = scope.ServiceProvider.GetRequiredService<HealthCareContext>();
+
+            dbContext.Database.EnsureCreated();
+
+            if (!dbContext.Patients.Any())
             {
-                var dbContext = scope.ServiceProvider.GetRequiredService<HealthCareContext>();
-
-                dbContext.Database.EnsureCreated();
-
                 if (!dbContext.Patients.Any())
                 {
-                    dbContext.Patients.Add(new Patient { Id = Guid.NewGuid(), Name = "Hans Hansson", Email = "hans.h@example.com" });
-                    dbContext.Patients.Add(new Patient { Id = Guid.NewGuid(), Name = "Axel Fingersson", Email = "axel.finger@example.com" });
-                    dbContext.Patients.Add(new Patient { Id = Guid.NewGuid(), Name = "Astrid Lindgren", Email = "a.lindgren@example.com" });
+                    var patient1 = new Patient { Id = Guid.NewGuid(), Name = "Hans Hansson", Email = "hans.h@example.com" };
+                    var patient2 = new Patient { Id = Guid.NewGuid(), Name = "Axel Fingersson", Email = "axel.finger@example.com" };
+                    var patient3 = new Patient { Id = Guid.NewGuid(), Name = "Astrid Lindgren", Email = "a.lindgren@example.com" };
+
+
+                    dbContext.Patients.Add(patient1);
+                    dbContext.Patients.Add(patient2);
+                    dbContext.Patients.Add(patient3);
 
                     dbContext.SaveChanges();
-                }
 
                 if (!dbContext.Caregivers.Any())
                 {
@@ -48,3 +54,21 @@ namespace HealthCare.WebApp.SampleData
 
     }
 }
+
+                if (!dbContext.Bookings.Any())
+                {
+
+                    dbContext.Add(new Booking { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(2), Patient = patient1, Service = "General Checkup" });
+                    dbContext.Add(new Booking { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(4), Patient = patient2, Service = "Vaccination" });
+                }
+                dbContext.SaveChanges();
+                }
+
+
+
+
+            }
+        }
+    }
+}
+

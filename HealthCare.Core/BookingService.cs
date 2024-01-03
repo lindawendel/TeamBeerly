@@ -1,56 +1,35 @@
-﻿using HealthCare.Core.Models;
-using System;
-    using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using HealthCare.Core.Models;
+using HealthCare.WebApp.Data;
 
-    namespace HealthCare.Core
+namespace HealthCare.Core
+{
+    public class BookingService 
     {
-        public class BookingService
+        private readonly HealthCareContext _dbContext;
+
+        public BookingService(HealthCareContext dbContext)
         {
-            private List<Booking> bookings = new List<Booking>();
+            _dbContext = dbContext;
 
-            public BookingService()
-            {
-                // mock data
-                var patient1 = new Patient { Id = Guid.NewGuid(), Name = "John Doe", Email = "john.doe@example.com" };
-                var patient2 = new Patient { Id = Guid.NewGuid(), Name = "Jane Smith", Email = "jane.smith@example.com" };
+            // Ensure the database is created
+            _dbContext.Database.EnsureCreated();
+        }
 
-                bookings.Add(new Booking { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(2), Patient = patient1, Service = "General Checkup" });
-                bookings.Add(new Booking { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(4), Patient = patient2, Service = "Vaccination" });
-            }
+        public IEnumerable<Booking> GetBookings()
+        {
+            return _dbContext.Bookings.ToList();
+        }
 
-            public IEnumerable<Booking> GetBookings()
-            {
-                return bookings;
-            }
-
-            public void AddBooking(Booking booking)
-            {
-                bookings.Add(booking);
-            }
+        public void AddBooking(Booking booking)
+        {
+            _dbContext.Bookings.Add(booking);
+            _dbContext.SaveChanges();
         }
     }
+}
 
-    /*    public class BookingService
-        {
-            private List<Booking> bookings = new List<Booking>();
-
-            public BookingService()
-            {
-                // mock data
-                bookings.Add(new Booking { Id = new Guid(), Time = DateTime.Now.AddHours(2), Patient = "John Doe", Service = "General Checkup" });
-                bookings.Add(new Booking { Id = new Guid(), Time = DateTime.Now.AddHours(4), Patient = "Jane Smith", Service = "Vaccination" });
-
-            }
-
-            public IEnumerable<Booking> GetBookings()
-            {
-                return bookings;
-            }
-
-            public void AddBooking(Booking booking)
-            {
-                bookings.Add(booking);
-            }
-        }*/
 
 

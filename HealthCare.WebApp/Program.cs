@@ -16,6 +16,9 @@ builder.Services.AddDbContext<HealthCareContext>(options =>
     options.UseInMemoryDatabase("HealthCareDB");
 });
 
+InMemoryDbInitializer.Initialize(builder.Services.BuildServiceProvider());
+
+
 builder.Services.AddScoped<FeedbackService>();
 builder.Services.AddScoped<AppointmentService>();
 builder.Services.AddScoped<BookingService>();
