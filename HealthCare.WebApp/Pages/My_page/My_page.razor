@@ -1,10 +1,11 @@
 ﻿@page "/my_page"
 @using HealthCare.Core.Models;
 @inject PatientService patientService
+@inject AppointmentService appointmentService
 
-<h3>My page</h3>
+<h3>My patient page</h3>
 
-<h3 class="MyPage">Personal</h3>
+<h4 class="MyPage">Personal</h4>
 
 @* @foreach (var patient in patientService.GetAllPatients())
 {
@@ -17,10 +18,22 @@
 
 
     <div>
-        <p>Title: @patientService.DuringDevFindOnePatient().Id</p>
-        <p>Comment: @patientService.DuringDevFindOnePatient().Name</p>
-        <p>Time: @patientService.DuringDevFindOnePatient().Email</p>
+        <p>Id: @patientService.DuringDevFindOnePatient().Id</p>
+        <p>Name: @patientService.DuringDevFindOnePatient().Name</p>
+        <p>Email: @patientService.DuringDevFindOnePatient().Email</p>
     </div>
+
+
+    <h4 class="PatientAppointments">Appointments</h4>
+    @foreach (var appointment in appointmentService.GetAppointmentsByPatientId(patientService.DuringDevFindOnePatient().Id))
+    {
+<div>
+    <p>Appointment-Id: @appointment.Id</p>
+    <p>Time: @appointment.Time</p>
+    <p>Service: @appointment.Service</p>
+    <p>Caregiver: @appointment.Caregiver.Name</p>
+</div>
+    }
 
 
 @code {

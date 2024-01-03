@@ -14,39 +14,41 @@ public static class InMemoryDbInitializer
 
             dbContext.Database.EnsureCreated();
 
-            if (!dbContext.Patients.Any())
+            if (!dbContext.Patients.Any() || !dbContext.Caregivers.Any() || !dbContext.Bookings.Any() || !dbContext.Appointments.Any())
             {
-                if (!dbContext.Patients.Any())
-                {
-                    var patient1 = new Patient { Id = Guid.NewGuid(), Name = "Hans Hansson", Email = "hans.h@example.com" };
-                    var patient2 = new Patient { Id = Guid.NewGuid(), Name = "Axel Fingersson", Email = "axel.finger@example.com" };
-                    var patient3 = new Patient { Id = Guid.NewGuid(), Name = "Astrid Lindgren", Email = "a.lindgren@example.com" };
+                var patient1 = new Patient { Id = Guid.NewGuid(), Name = "Hans Hansson", Email = "hans.h@example.com" };
+                var patient2 = new Patient { Id = Guid.NewGuid(), Name = "Axel Fingersson", Email = "axel.finger@example.com" };
+                var patient3 = new Patient { Id = Guid.NewGuid(), Name = "Astrid Lindgren", Email = "a.lindgren@example.com" };
 
+                dbContext.Patients.Add(patient1);
+                dbContext.Patients.Add(patient2);
+                dbContext.Patients.Add(patient3);
 
-                    dbContext.Patients.Add(patient1);
-                    dbContext.Patients.Add(patient2);
-                    dbContext.Patients.Add(patient3);
+                var caregiver1 = new Caregiver { Id = Guid.NewGuid(), Name = "Dr Emma Engberg", Email = "emma.e@example.com", };
+                var caregiver2 = new Caregiver { Id = Guid.NewGuid(), Name = "Dr Marcus Nilsson", Email = "marcus.n@example.com" };
+                var caregiver3 = new Caregiver { Id = Guid.NewGuid(), Name = "Dr Sandra Ask", Email = "sandra.a@example.com" };
 
-                    dbContext.SaveChanges();
+                dbContext.Caregivers.Add(caregiver1);
+                dbContext.Caregivers.Add(caregiver2);
+                dbContext.Caregivers.Add(caregiver3);
 
-                if (!dbContext.Caregivers.Any())
-                {
-                    dbContext.Caregivers.Add(new Caregiver { Id = Guid.NewGuid(), Name = "Emma Engberg", Email = "emma.e@example.com" });
-                    dbContext.Caregivers.Add(new Caregiver { Id = Guid.NewGuid(), Name = "Marcus Nilsson", Email = "marcus.n@example.com" });
-                    dbContext.Caregivers.Add(new Caregiver { Id = Guid.NewGuid(), Name = "Sandra Ask", Email = "sandra.a@example.com" });
+                var booking1 = new Booking { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(2), Patient = patient1, Service = "General Checkup" };
+                var booking2 = new Booking { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(4), Patient = patient2, Service = "Vaccination" };
+                var booking3 = new Booking { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(6), Patient = patient3, Service = "Amputation" };
 
-                    dbContext.SaveChanges();
-                }
+                dbContext.Bookings.Add(booking1);
+                dbContext.Bookings.Add(booking2);
+                dbContext.Bookings.Add(booking3);
 
-                
-                if (!dbContext.Bookings.Any())
-                {
+                var appointment1 = new Appointment { Id = Guid.NewGuid(), Patient = patient1, Caregiver = caregiver1, Service = booking1.Service, Description = "Ahoy ahoy" };
+                var appointment2 = new Appointment { Id = Guid.NewGuid(), Patient = patient2, Caregiver = caregiver2, Service = booking2.Service, Description = "Ahoy ahoy2" };
+                var appointment3 = new Appointment { Id = Guid.NewGuid(), Patient = patient3, Caregiver = caregiver3, Service = booking3.Service, Description = "Ahoy ahoy3" };
 
-                    dbContext.Add(new Booking { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(2), Patient = patient1, Service = "General Checkup" });
-                    dbContext.Add(new Booking { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(4), Patient = patient2, Service = "Vaccination" });
-                }
+                dbContext.Appointments.Add(appointment1);
+                dbContext.Appointments.Add(appointment2);
+                dbContext.Appointments.Add(appointment3);
+
                 dbContext.SaveChanges();
-                }
 
                 foreach (var p in dbContext.Patients)
                 {
@@ -58,9 +60,58 @@ public static class InMemoryDbInitializer
                     Console.WriteLine(c.Id + " " + c.Name + " " + c.Email);
                 }
 
-
+                foreach (var a in dbContext.Appointments)
+                {
+                    Console.WriteLine(a.Id + " " +  a.Patient.Name + " "+ a.Caregiver.Name);
+                }
             }
+
         }
+
+            //if (!dbContext.Patients.Any())
+            //{
+            //    var patient1 = new Patient { Id = Guid.NewGuid(), Name = "Hans Hansson", Email = "hans.h@example.com" };
+            //    var patient2 = new Patient { Id = Guid.NewGuid(), Name = "Axel Fingersson", Email = "axel.finger@example.com" };
+            //    var patient3 = new Patient { Id = Guid.NewGuid(), Name = "Astrid Lindgren", Email = "a.lindgren@example.com" };
+
+
+            //    dbContext.Patients.Add(patient1);
+            //    dbContext.Patients.Add(patient2);
+            //    dbContext.Patients.Add(patient3);
+
+            //    dbContext.SaveChanges();
+
+
+            //    if (!dbContext.Caregivers.Any())
+            //    {
+            //        dbContext.Caregivers.Add(new Caregiver { Id = Guid.NewGuid(), Name = "Emma Engberg", Email = "emma.e@example.com" });
+            //        dbContext.Caregivers.Add(new Caregiver { Id = Guid.NewGuid(), Name = "Marcus Nilsson", Email = "marcus.n@example.com" });
+            //        dbContext.Caregivers.Add(new Caregiver { Id = Guid.NewGuid(), Name = "Sandra Ask", Email = "sandra.a@example.com" });
+
+            //        dbContext.SaveChanges();
+            //    }
+
+            //    if (!dbContext.Bookings.Any())
+            //    {
+
+            //        dbContext.Add(new Booking { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(2), Patient = patient1, Service = "General Checkup" });
+            //        dbContext.Add(new Booking { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(4), Patient = patient2, Service = "Vaccination" });
+
+            //        dbContext.SaveChanges();
+            //    }
+
+            //    foreach (var p in dbContext.Patients)
+            //    {
+            //        Console.WriteLine(p.Id + " " + p.Name + " " + p.Email);
+            //    }
+
+            //    foreach (var c in dbContext.Caregivers)
+            //    {
+            //        Console.WriteLine(c.Id + " " + c.Name + " " + c.Email);
+            //    }
+            //}
+
+        
     }
 }
 
