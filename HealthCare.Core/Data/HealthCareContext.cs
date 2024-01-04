@@ -1,7 +1,7 @@
 ﻿using HealthCare.Core.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace HealthCare.WebApp.Data
+namespace HealthCare.Core.Data
 {
     public class HealthCareContext : DbContext
     {

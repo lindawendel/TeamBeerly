@@ -1,0 +1,74 @@
+﻿@page "/dashboard"
+@inject HealthCare.Core.Data.HealthCareContext DbContext
+@using HealthCare.Core.Models
+@using Microsoft.EntityFrameworkCore
+
+<h3>Dashboard Caregiver</h3>
+
+<div>
+    <h5>Schedule</h5>
+    <NavLink class="nav-link" href="dashboard">Manage Availability</NavLink>
+</div>
+
+<div class="upcomingApointments">
+    <h5>Upcoming Appointments</h5>
+    <ol>
+        @foreach (var appointment in UpcomingAppointments)
+        {
+            <li>@appointment.Time @appointment.Patient.Name</li>
+        }
+    </ol>
+</div>
+
+<div class="pastAppointments">
+    <h5>Past Appointments</h5>
+    <ol>
+        @foreach (var appointment in PastAppointments)
+        {
+            <li>@appointment.Time @appointment.Patient.Name</li>
+        }
+    </ol>
+</div>
+
+<div class="profile">
+    <h5>Profile</h5>
+    <label>Name: @Caregiver?.Name</label>
+    <NavLink class="nav-link" href="profile"> Edit Profile </NavLink>
+</div>
+
+@code {
+    private List<Appointment> UpcomingAppointments = new List<Appointment>();
+    private List<Appointment> PastAppointments = new List<Appointment>();
+    private Caregiver Caregiver;
+
+    protected override void OnInitialized()
+    {
+        GetCaregiver();
+        GetAppointments();
+    }
+
+    private void GetCaregiver()
+    {
+        Caregiver = DbContext.Caregivers.FirstOrDefault();
+    }
+
+    private void GetAppointments()
+    {
+        var now = DateTime.Now;
+
+        if (Caregiver != null)
+        {
+            UpcomingAppointments = DbContext.Appointments
+                .Where(a => a.Time > now && a.Caregiver.Id == Caregiver.Id)
+                .Include(a => a.Patient)
+                .OrderBy(a => a.Time)
+                .ToList();
+
+            PastAppointments = DbContext.Appointments
+                .Where(a => a.Time < now && a.Caregiver.Id == Caregiver.Id)
+                .Include(a => a.Patient)
+                .OrderByDescending(a => a.Time)
+                .ToList();
+        }
+    }
+}

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using HealthCare.Core.Models;
-using HealthCare.WebApp.Data;
+using HealthCare.Core.Data;
 
 namespace HealthCare.Core
 {
