@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using HealthCare.Core;
 using Microsoft.EntityFrameworkCore;
-using HealthCare.WebApp.Data;
+using HealthCare.Core.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +17,7 @@ builder.Services.AddDbContext<HealthCareContext>(options =>
 
 InMemoryDbInitializer.Initialize(builder.Services.BuildServiceProvider());
 
+builder.Services.AddScoped<HealthCareContext>();
 
 builder.Services.AddScoped<FeedbackService>();
 builder.Services.AddScoped<AppointmentService>();
