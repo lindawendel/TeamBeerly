@@ -17,6 +17,7 @@ builder.Services.AddDbContext<HealthCareContext>(options =>
 
 InMemoryDbInitializer.Initialize(builder.Services.BuildServiceProvider());
 
+builder.Services.AddScoped<HealthCareContext>(); // Recently added
 builder.Services.AddScoped<FeedbackService>();
 builder.Services.AddScoped<AppointmentService>();
 builder.Services.AddScoped<BookingService>();
