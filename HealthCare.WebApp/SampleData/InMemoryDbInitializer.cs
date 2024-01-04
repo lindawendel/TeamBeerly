@@ -1,8 +1,9 @@
+
+﻿using HealthCare.Core.Data;
 ﻿using HealthCare;
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using HealthCare.Core.Models;
-using HealthCare.Core.Data;
 
 public static class InMemoryDbInitializer
 {
@@ -113,6 +114,10 @@ public static class InMemoryDbInitializer
 
                 dbContext.SaveChanges();
             }
+
         }
+
+        
     }
 }
+
