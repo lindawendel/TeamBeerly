@@ -14,6 +14,15 @@ namespace HealthCare.Core.Models
         public DateTime Time { get; set; }
         public string Service {  get; set; }
         public string Description { get; set; }
-
     }
+
+    //possible changes to entity
+    
+    //public class Appointment
+    //{
+    //    public Guid Id { get; set; }
+    //    public Booking Booking { get; set; }
+    //    public Caregiver Caregiver { get; set; }
+    //    public string Description { get; set; }
+    //}
 }

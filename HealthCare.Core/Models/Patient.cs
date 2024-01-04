@@ -12,7 +12,10 @@ namespace HealthCare.Core.Models
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
-        public List<Appointment> Appointments { get; set; }
+        public List<Appointment> Appointments { get; set; } // remove?
+
+         // public List<Booking> Bookings { get; set } // possible change
+         // public List<Feedback> Feedbacks {get; set } // eventual
 
     }
 }
