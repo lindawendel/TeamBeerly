@@ -5,24 +5,26 @@
 
 <h3>My patient page</h3>
 
+<div>
+    <h5>Schedule</h5>
+    <NavLink class="nav-link" href="dashboard">Manage Availability</NavLink>
+</div>
+
 <h4 class="MyPage">Personal</h4>
 
-@* @foreach (var patient in patientService.GetAllPatients())
-{
-    <div>
-        <p>Title: @patient.Id</p>
-        <p>Comment: @patient.Name</p>
-        <p>Time: @patient.Email</p>
-    </div>
-} *@
-
-
-    <div>
+@*     <div>
         <p>Id: @patientService.DuringDevFindOnePatient().Id</p>
         <p>Name: @patientService.DuringDevFindOnePatient().Name</p>
         <p>Email: @patientService.DuringDevFindOnePatient().Email</p>
     </div>
+ *@
 
+<div class="profile">
+    <p><label>Id: @patientService.DuringDevFindOnePatient().Id</label></p
+    <p><label>Name: @patientService.DuringDevFindOnePatient().Name</label></p
+    <p><label>Email: @patientService.DuringDevFindOnePatient().Email</label></p
+    <NavLink class="nav-link" href="profile"> Edit Profile </NavLink>
+</div>
 
     <h4 class="PatientAppointments">Appointments</h4>
     @foreach (var appointment in appointmentService.GetAppointmentsByPatientId(patientService.DuringDevFindOnePatient().Id))

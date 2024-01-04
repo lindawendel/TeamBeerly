@@ -16,7 +16,7 @@ namespace HealthCare.Core
 
         private readonly HealthCareContext _dbContext;
 
-        private PatientService(HealthCareContext dbContext)
+        public PatientService(HealthCareContext dbContext)
         {
             _dbContext = dbContext;
         }

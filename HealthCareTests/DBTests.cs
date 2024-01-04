@@ -1,5 +1,5 @@
 ﻿using HealthCare.Core.Models;
-using HealthCare.WebApp.Data;
+using HealthCare.Core.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
