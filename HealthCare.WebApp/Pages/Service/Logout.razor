@@ -1,0 +1,10 @@
+﻿@inject IAuthenticationService AuthenticationService
+
+<button @onclick="LogoutUser">Log Out</button>
+
+@code {
+    private async Task LogoutUser()
+    {
+        await AuthenticationService.Logout();
+    }
+}
