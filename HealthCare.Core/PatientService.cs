@@ -16,7 +16,7 @@ namespace HealthCare.Core
 
         private readonly HealthCareContext _dbContext;
 
-        public PatientService(HealthCareContext dbContext)
+        private PatientService(HealthCareContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -43,26 +43,6 @@ namespace HealthCare.Core
                 throw new Exception();
             }
         }
-
-
-        //private List<Patient> patients = new List<Patient>();
-        //public PatientService()
-        //{
-        //    patients.Add(new Patient { Id = Guid.NewGuid(), Name = "Hans Hansson", Email = "hans.h@example.com" });
-        //    patients.Add(new Patient { Id = Guid.NewGuid(), Name = "Axel Fingersson", Email = "axel.finger@example.com" });
-        //    patients.Add(new Patient { Id = Guid.NewGuid(), Name = "Astrid Lindgren", Email = "a.lindgren@example.com" });
-        //}
-
-        //public IEnumerable<Patient> GetAllPatients()
-        //{
-        //    return patients;
-        //}
-
-        //public Patient GetPatient(Guid id)
-        //{
-        //    Patient result = patients.FirstOrDefault(x => x.Id == id);
-        //    return result;
-        //}
 
     }
 }
