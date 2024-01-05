@@ -1,5 +1,5 @@
 ﻿using Xunit;
-using HealthCare.Core;
+using HealthCare.Core
 using HealthCare.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
