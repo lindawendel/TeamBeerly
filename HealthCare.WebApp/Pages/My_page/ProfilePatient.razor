@@ -1,0 +1,47 @@
+﻿@page "/my_page/profile"
+@inject HealthCare.Core.Data.HealthCareContext DbContext
+@using HealthCare.Core.Models
+
+<h3>Profile</h3>
+
+<div>
+    <label>Name:</label>
+    <input @bind="Patient.Name" />
+</div>
+
+<div>
+    <label>Date of Birth:</label>
+    @* <input @bind="caregiver.DateOfBirth" /> *@
+</div>
+
+<div>
+    <label>Phone Number:</label>
+    @* <input @bind="caregiver.PhoneNumber" /> *@
+</div>
+
+<div>
+    <label>Email:</label>
+    <input @bind="Patient.Email" />
+</div>
+
+<button @onclick="SavePatientProfile">Save</button>
+
+
+@code {
+
+    private Patient Patient;
+
+    protected override void OnInitialized()
+    {
+        GetPatientProfile();
+    }
+
+    private void GetPatientProfile()
+    {
+        Patient = DbContext.Patients.FirstOrDefault(); 
+    }
+
+    private void SavePatientProfile()
+    {
+    }
+}
