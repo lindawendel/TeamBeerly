@@ -35,6 +35,7 @@ public class AuthenticationService : IAuthenticationService
         await _httpContextAccessor.HttpContext.ChallengeAsync(OpenIdConnectDefaults.AuthenticationScheme, properties);
     }
 
+
     public async Task Logout()
     {
         await _httpContextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -47,5 +48,6 @@ public class AuthenticationService : IAuthenticationService
         _httpContextAccessor.HttpContext.Response.Redirect(logoutUri);
     }
 }
+
 
 
