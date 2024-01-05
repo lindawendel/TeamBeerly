@@ -1,5 +1,5 @@
-﻿using HealthCare.Core.Data;
-﻿using HealthCare;
+using HealthCare.Core.Data;
+using HealthCare;
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using HealthCare.Core.Models;
@@ -86,9 +86,6 @@ public static class InMemoryDbInitializer
                 };
 
 
-                    dbContext.Add(new Booking { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(2), Patient = patient1, Service = "General Checkup" });
-                    dbContext.Add(new Booking { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(4), Patient = patient2, Service = "Vaccination" });
-                }
 
 
                 dbContext.Appointments.AddRange(upcommingAppointments);
@@ -122,17 +119,17 @@ public static class InMemoryDbInitializer
                 dbContext.SaveChanges();
             }
 
-        
-                if (!dbContext.Feedbacks.Any())
-                    {
-                        dbContext.Add(new Feedback { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(6), Title = "snygge jobbe", Comment = "riktigt bra jobbat, " });
-                        dbContext.Add(new Feedback { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(2), Title = "ful o dum", Comment = "riktigt... jobbat " });
-                        dbContext.Add(new Feedback { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(5), Title = "hjälpte", Comment = "jösses va?" });
-                    
-                                    dbContext.SaveChanges();
 
-                }
+            if (!dbContext.Feedbacks.Any())
+            {
+                dbContext.Add(new Feedback { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(6), Title = "snygge jobbe", Comment = "riktigt bra jobbat, " });
+                dbContext.Add(new Feedback { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(2), Title = "ful o dum", Comment = "riktigt... jobbat " });
+                dbContext.Add(new Feedback { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(5), Title = "hjälpte", Comment = "jösses va?" });
 
-                }
+                dbContext.SaveChanges();
+
+            }
+
         }
-
+    }
+}
