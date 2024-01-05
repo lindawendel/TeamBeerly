@@ -1,11 +1,53 @@
 ﻿@page "/feedback"
 @using HealthCare.Core.Models;
 @inject FeedbackService feedbackService
+@inject RatingService ratingService
 
 <h3>Leave Feedback</h3>
 <input @bind="feedback.Title" placeholder="Feedback Title" />
 <textarea @bind="feedback.Comment" placeholder="Feedback Comment"></textarea>
 <button @onclick="SubmitFeedback">Submit Feedback</button>
+<br />
+<br />
+<br />
+<h3>Rate the Stuff</h3> @*RENAME THIS WHEN IT'S TIME " USE IT*@
+
+<select name="Rating" @bind="selectedRating">
+    <option value="">--Please choose an option--</option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+</select>
+
+<button @onclick="SaveRating">Save Rating</button>
+<br />
+<br />
+<br />
+<h3>All Ratings</h3>
+@foreach (var rating in ratingService.GetAllRatings())
+{
+    <div>
+
+        <p>Rating: @rating.RatingValue</p>
+        <p>Time: @rating.Time</p>
+
+    </div>
+}
+<br />
+<br />
+<br />
+@if (ratingService.GetAllRatings().Any())
+{
+    var averageRating = ratingService.GetAllRatings().Average(f => f.RatingValue);
+    <p>Average Rating: @averageRating</p>
+}
+else
+{
+    <p>No ratings available.</p>
+}
+
 
 <h3 class="feedback">All Feedback</h3>
 @foreach (var feedback in feedbackService.GetAllFeedback())
@@ -15,9 +57,33 @@
         <p>Comment: @feedback.Comment</p>
         <p>Time: @feedback.Time</p>
     </div>
+
 }
 
+
+
+
+
 @code {
+    public HealthCare.Core.Models.Rating rating = new HealthCare.Core.Models.Rating();
+
+    private int selectedRating;
+
+    private async Task SaveRating()
+    {
+        if (selectedRating > 0)
+        {
+            var rating = new Rating
+                {
+                    Id = Guid.NewGuid(),
+                    RatingValue = selectedRating,
+                    Time = DateTime.Now
+                };
+
+            ratingService.AddRating(rating);
+        }
+    }
+
     //rename class or pages cuz nameed pages and classes collide
     public HealthCare.Core.Models.Feedback feedback = new HealthCare.Core.Models.Feedback();
 
@@ -26,9 +92,11 @@
         // Set the time before saving
         feedback.Time = DateTime.Now;
 
-        feedbackService.SaveFeedback(feedback);
+        feedbackService.AddFeedback(feedback);
 
         // reset the input fields
         feedback = new HealthCare.Core.Models.Feedback();
     }
+
+
 }

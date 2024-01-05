@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using HealthCare.Core.Data;
 using HealthCare.Core.Models;
-using HealthCare.WebApp.Data;
 
 namespace HealthCare.Core
 {
