@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components.Web;
 using HealthCare.Core;
 using Microsoft.EntityFrameworkCore;
 
-using HealthCare.WebApp.Data;
+using HealthCare.Core.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
@@ -11,8 +11,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
-using HealthCare.Core.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
