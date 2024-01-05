@@ -1,0 +1,36 @@
+﻿@using System.Security.Claims
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IAuthenticationService AuthenticationService
+@inject NavigationManager NavigationManager
+
+<div>
+    @if (currentUser?.Identity?.IsAuthenticated ?? false)
+    {
+        <span>You are logged in as: @currentUser.Identity.Name</span>
+        <button @onclick="Logout">Logout</button>
+    }
+    else
+    {
+        <button @onclick="Login">Login</button>
+    }
+</div>
+
+@code {
+    private ClaimsPrincipal currentUser;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        currentUser = authState.User;
+    }
+
+    private async Task Login()
+    {
+        await AuthenticationService.Login();
+    }
+
+    private async Task Logout()
+    {
+        await AuthenticationService.Logout();
+    }
+}

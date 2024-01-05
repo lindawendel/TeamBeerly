@@ -1,7 +1,13 @@
-﻿@inject BookingService BookingService
-@page "/"
+﻿@page "/"
+@inject NavigationManager NavigationManager
 
-<PageTitle>Index</PageTitle>
+<h1>Welcome to the HealthCare App</h1>
 
-<BookingComponent />
+<button @onclick="NavigateToLogin">Log in with Auth0</button>
 
+@code {
+    private void NavigateToLogin()
+    {
+        NavigationManager.NavigateTo("/login");
+    }
+}
