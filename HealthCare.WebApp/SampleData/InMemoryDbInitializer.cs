@@ -90,15 +90,6 @@ public static class InMemoryDbInitializer
                     dbContext.Add(new Booking { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(4), Patient = patient2, Service = "Vaccination" });
                 }
 
-                if (!dbContext.Feedbacks.Any())
-                    {
-                        dbContext.Add(new Feedback { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(6), Title = "snygge jobbe", Comment = "riktigt bra jobbat, " });
-                        dbContext.Add(new Feedback { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(2), Title = "ful o dum", Comment = "riktigt... jobbat " });
-                        dbContext.Add(new Feedback { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(5), Title = "hjälpte", Comment = "jösses va?" });
-                    }
-
-                    dbContext.SaveChanges();
-                }
 
                 dbContext.Appointments.AddRange(upcommingAppointments);
 
@@ -131,6 +122,16 @@ public static class InMemoryDbInitializer
                 dbContext.SaveChanges();
             }
 
+        
+                if (!dbContext.Feedbacks.Any())
+                    {
+                        dbContext.Add(new Feedback { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(6), Title = "snygge jobbe", Comment = "riktigt bra jobbat, " });
+                        dbContext.Add(new Feedback { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(2), Title = "ful o dum", Comment = "riktigt... jobbat " });
+                        dbContext.Add(new Feedback { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(5), Title = "hjälpte", Comment = "jösses va?" });
+                    }
+
+                    dbContext.SaveChanges();
+                }
         }
     }
-}
+
