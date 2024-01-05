@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using HealthCare.Core;
 using Microsoft.EntityFrameworkCore;
-using HealthCare.Core.Data;
+using HealthCare.WebApp.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
