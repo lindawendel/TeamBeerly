@@ -63,7 +63,7 @@ builder.Services.AddScoped<IAuthenticationService>(provider =>
         provider.GetRequiredService<IHttpContextAccessor>(),
         provider.GetRequiredService<IConfiguration>()));
 
-=======
+
 InMemoryDbInitializer.Initialize(builder.Services.BuildServiceProvider());
 
 
