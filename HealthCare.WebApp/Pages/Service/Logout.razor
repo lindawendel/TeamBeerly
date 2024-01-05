@@ -1,9 +1,10 @@
-﻿@inject IAuthenticationService AuthenticationService
+﻿@page "/logout"
+@inject IAuthenticationService AuthenticationService
 
-@* <button @onclick="LogoutUser">Log Out</button> *@
+<h3>Logging out...</h3>
 
 @code {
-    private async Task LogoutUser()
+    protected override async Task OnInitializedAsync()
     {
         await AuthenticationService.Logout();
     }

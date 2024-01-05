@@ -16,7 +16,6 @@
     @if (currentUser?.Identity?.IsAuthenticated ?? false)
     {
         <div class="nav-item px-3">
-            <span class="text-white">Logged in as @currentUser.Identity.Name</span>
             <button class="btn btn-sm btn-secondary ml-2" @onclick="Logout">Logout</button>
         </div>
     }
@@ -27,8 +26,6 @@
         </div>
     }
 </div>
-     
-
 
 <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
     <nav class="flex-column">
@@ -66,13 +63,13 @@
         collapseNavMenu = !collapseNavMenu;
     }
 
-    private async Task Login()
-    {
-        await AuthenticationService.Login();
-    }
-
     private async Task Logout()
     {
-        await AuthenticationService.Logout();
+        NavigationManager.NavigateTo("/logout", forceLoad: true);
+    }
+
+    private async Task Login()
+    {
+        NavigationManager.NavigateTo("/login", forceLoad: true);
     }
 }
