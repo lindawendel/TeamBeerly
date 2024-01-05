@@ -1,10 +1,10 @@
 ﻿using Xunit;
 using HealthCare.Core;
-using HealthCare.Core.Data;
 using HealthCare.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using HealthCare.Core.Data;
 
 namespace HealthCareTests
 {

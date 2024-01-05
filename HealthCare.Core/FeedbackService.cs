@@ -1,34 +1,33 @@
-﻿using HealthCare.Core.Models;
-using System;
+﻿using HealthCare.Core.Data;
+using HealthCare.Core.Models;
 
 
 namespace HealthCare.Core
 {
     public class FeedbackService
+
     {
-        private List<Feedback> feedbackList = new List<Feedback>();
+        private readonly HealthCareContext _dbContext;
 
-        public FeedbackService()
+        public FeedbackService(HealthCareContext dbContext)
         {
-            LoadDummyData();
-        }
+            _dbContext = dbContext;
 
-        private void LoadDummyData()
-        {
-            // mock data
-            feedbackList.Add(new Feedback { Id = Guid.NewGuid(), Title = "Great Service", Comment = "Great service, thank you!", Time = DateTime.Now });
-            feedbackList.Add(new Feedback { Id = Guid.NewGuid(), Title = "Satisfaction", Comment = "Very satisfied with the care provided.", Time = DateTime.Now });
-        }
-
-        public void SaveFeedback(Feedback feedback)
-        {
-            feedbackList.Add(feedback);
+            // Ensure the database is created
+            _dbContext.Database.EnsureCreated();
         }
 
         public IEnumerable<Feedback> GetAllFeedback()
         {
-            return feedbackList;
+            return _dbContext.Feedbacks.ToList();
         }
+
+        public void AddFeedback(Feedback feedback)
+        {
+            _dbContext.Feedbacks.Add(feedback);
+            _dbContext.SaveChanges();
+        }
+
     }
 }
 

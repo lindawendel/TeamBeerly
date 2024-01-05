@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using HealthCare.Core;
 using Microsoft.EntityFrameworkCore;
-
 using HealthCare.Core.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -11,6 +10,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +31,7 @@ builder.Services.AddScoped<HealthCareContext>(); // Recently added
 builder.Services.AddScoped<FeedbackService>();
 builder.Services.AddScoped<AppointmentService>();
 builder.Services.AddScoped<BookingService>();
+builder.Services.AddScoped<RatingService>();
 builder.Services.AddScoped<PatientService>();
 
 
@@ -60,6 +61,7 @@ builder.Services.AddScoped<IAuthenticationService>(provider =>
         provider.GetRequiredService<NavigationManager>(),
         provider.GetRequiredService<IHttpContextAccessor>(),
         provider.GetRequiredService<IConfiguration>()));
+
 
 
 InMemoryDbInitializer.Initialize(builder.Services.BuildServiceProvider());
