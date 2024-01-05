@@ -1,0 +1,53 @@
+﻿@page "/profile"
+@inject HealthCare.Core.Data.HealthCareContext DbContext
+@using HealthCare.Core.Models
+
+<NavLink class="nav-link" href="dashboard">Back</NavLink>
+
+<h3>Profile</h3>
+
+<div>
+    <label>First Name:</label>
+    <input @bind="Caregiver.Name" />
+</div>
+
+<div>
+    <label>Last Name:</label>
+    @* <input @bind="caregiver.LastName" /> *@
+</div>
+
+<div>
+    <label>Date of Birth:</label>
+    @* <input @bind="caregiver.DateOfBirth" /> *@
+</div>
+
+<div>
+    <label>Phone Number:</label>
+    @* <input @bind="caregiver.PhoneNumber" /> *@
+</div>
+
+<div>
+    <label>Email:</label>
+    <input @bind="Caregiver.Email" />
+</div>
+
+<button @onclick="SaveCaregiverProfile">Save</button>
+
+@code {
+
+    private Caregiver Caregiver;
+
+    protected override void OnInitialized()
+    {
+        GetCaregiverProfile();
+    }
+
+    private void GetCaregiverProfile()
+    {
+        Caregiver = DbContext.Caregivers.FirstOrDefault(); // Adjust based on your data model
+    }
+
+    private void SaveCaregiverProfile()
+    {
+    }
+}

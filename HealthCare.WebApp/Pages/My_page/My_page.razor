@@ -1,0 +1,53 @@
+﻿@page "/my_page"
+@using HealthCare.Core.Models;
+@inject PatientService patientService
+@inject AppointmentService appointmentService
+
+<h3>My patient page</h3>
+
+<div>
+    <h5>Schedule</h5>
+    <NavLink class="nav-link" href="dashboard">Manage Availability</NavLink>
+</div>
+
+<h4 class="MyPage">Personal</h4>
+
+@*     <div>
+        <p>Id: @patientService.DuringDevFindOnePatient().Id</p>
+        <p>Name: @patientService.DuringDevFindOnePatient().Name</p>
+        <p>Email: @patientService.DuringDevFindOnePatient().Email</p>
+    </div>
+ *@
+
+<div class="profile">
+    <p><label>Id: @patientService.DuringDevFindOnePatient().Id</label></p
+    <p><label>Name: @patientService.DuringDevFindOnePatient().Name</label></p
+    <p><label>Email: @patientService.DuringDevFindOnePatient().Email</label></p
+    <NavLink class="nav-link" href="profile"> Edit Profile </NavLink>
+</div>
+
+    <h4 class="PatientAppointments">Appointments</h4>
+    @foreach (var appointment in appointmentService.GetAppointmentsByPatientId(patientService.DuringDevFindOnePatient().Id))
+    {
+<div>
+    <p>Appointment-Id: @appointment.Id</p>
+    <p>Time: @appointment.Time</p>
+    <p>Service: @appointment.Service</p>
+    <p>Caregiver: @appointment.Caregiver.Name</p>
+</div>
+    }
+
+
+@code {
+
+    public HealthCare.Core.Models.Patient patient = new HealthCare.Core.Models.Patient();
+
+    // private Patient patientDetails;
+
+    // private void LoadPatient()
+    // {
+
+    //     patientDetails = patientService.DuringDevFindOnePatient();
+
+    // }
+}
