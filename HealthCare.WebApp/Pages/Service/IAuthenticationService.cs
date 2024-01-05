@@ -36,6 +36,7 @@ public class AuthenticationService : IAuthenticationService
     }
 
 
+
     public async Task Logout()
     {
         await _httpContextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -44,10 +45,9 @@ public class AuthenticationService : IAuthenticationService
         var clientId = _configuration["Auth0:ClientId"];
         var postLogoutRedirectUri = _navigationManager.BaseUri;
 
-        var logoutUri = $"https://{domain}/v2/logout?client_id={clientId}&returnTo={Uri.EscapeDataString(postLogoutRedirectUri)}";
-        _httpContextAccessor.HttpContext.Response.Redirect(logoutUri);
+        var logoutUrl = $"https://{domain}/v2/logout?client_id={clientId}&returnTo={Uri.EscapeDataString(postLogoutRedirectUri)}";
+        _navigationManager.NavigateTo(logoutUrl, forceLoad: true);
     }
 }
-
 
 
