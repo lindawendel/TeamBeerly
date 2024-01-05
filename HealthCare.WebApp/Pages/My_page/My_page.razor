@@ -1,6 +1,8 @@
 ﻿@page "/my_page"
 @using HealthCare.Core.Models;
 @using Microsoft.EntityFrameworkCore;
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Forms
 @inject PatientService patientService
 @inject AppointmentService appointmentService
 @inject HealthCare.Core.Data.HealthCareContext DbContext
@@ -17,6 +19,8 @@
 <div class="PatientProfile">
     <p><label>Id: @patient.Id</label></p
     <p><label>Name: @patient.Name</label></p
+    <p><label>Date of Birth: @patient.DateOfBirth.ToString("yyyy-MM-dd")</label></p
+    <p><label>Phonenumber: @patient.PhoneNumber</label></p
     <p><label>Email: @patient.Email</label></p
     <NavLink class="nav-link" href="my_page/profile"> Edit Profile </NavLink>
 </div>
