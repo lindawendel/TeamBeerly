@@ -36,7 +36,6 @@ public class AuthenticationService : IAuthenticationService
     }
 
 
-
     public async Task Logout()
     {
         await _httpContextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
