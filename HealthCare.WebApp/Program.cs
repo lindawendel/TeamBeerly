@@ -23,6 +23,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<HealthCareContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+InMemoryDbInitializer.Initialize(builder.Services.BuildServiceProvider());
+
 // Scoped services
 builder.Services.AddScoped<FeedbackService>();
 builder.Services.AddScoped<AppointmentService>();

@@ -86,11 +86,7 @@ public static class InMemoryDbInitializer
                     appointment11, appointment12, appointment13, appointment14, appointment15, appointment16
                 };
 
-
-
-
                 dbContext.Appointments.AddRange(upcommingAppointments);
-
 
                 var pastAppointment1 = new Appointment { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(-2), Patient = patient15, Caregiver = caregiver1, Service = booking1.Service, Description = "Past Ahoy ahoy" };
                 var pastAppointment2 = new Appointment { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(-4), Patient = patient14, Caregiver = caregiver2, Service = booking2.Service, Description = "Past Ahoy ahoy2" };
@@ -121,7 +117,6 @@ public static class InMemoryDbInitializer
 
                 dbContext.SaveChanges();
             }
-
 
             if (!dbContext.Feedbacks.Any())
             {
