@@ -6,12 +6,19 @@ namespace HealthCare.Core.Data
 {
     public class HealthCareContext : DbContext
     {
-        public HealthCareContext()
-        { }
-
         public HealthCareContext(DbContextOptions<HealthCareContext> options)
-                   : base(options)
+            : base(options)
         {
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer(
+                    "ConnectionStrings",
+                    b => b.MigrationsAssembly("HealthCare.Core"));
+            }
         }
 
         public DbSet<Booking> Bookings { get; set; }

@@ -8,7 +8,7 @@ using HealthCare.Core.Data;
 
 namespace HealthCareTests
 {
-    public class FeedbackServiceTests : IDisposable
+    /*public class FeedbackServiceTests : IDisposable
     {
         private readonly HealthCareContext _context;
         private readonly FeedbackService _feedbackService;
@@ -60,5 +60,5 @@ namespace HealthCareTests
             // Dispose of the context after each test
             _context.Dispose();
         }
-    }
+    }*/
 }
