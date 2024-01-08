@@ -2,6 +2,8 @@
 @using HealthCare.Core.Models;
 @inject FeedbackService feedbackService
 @inject RatingService ratingService
+@inject IJSRuntime JSRuntime
+
 
 <h3>Leave Feedback</h3>
 <input @bind="feedback.Title" placeholder="Feedback Title" />
@@ -59,7 +61,6 @@ else
     </div>
 
 }
-
 
 
 
