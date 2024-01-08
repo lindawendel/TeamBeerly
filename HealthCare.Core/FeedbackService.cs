@@ -1,63 +1,54 @@
-﻿using HealthCare.Core.Models;
-using System;
+﻿using HealthCare.Core.Data;
+using HealthCare.Core.Models;
 
 
 namespace HealthCare.Core
 {
     public class FeedbackService
+
     {
-        private List<Feedback> feedbackList = new List<Feedback>();
+        private readonly HealthCareContext _dbContext;
 
-        public FeedbackService()
+        public FeedbackService(HealthCareContext dbContext)
         {
-            LoadDummyData();
-        }
+            _dbContext = dbContext;
 
-        private void LoadDummyData()
-        {
-            // mock data
-            feedbackList.Add(new Feedback { Id = Guid.NewGuid(), Title = "Great Service", Comment = "Great service, thank you!", Time = DateTime.Now });
-            feedbackList.Add(new Feedback { Id = Guid.NewGuid(), Title = "Satisfaction", Comment = "Very satisfied with the care provided.", Time = DateTime.Now });
-        }
-
-        public void SaveFeedback(Feedback feedback)
-        {
-            feedbackList.Add(feedback);
+            // Ensure the database is created
+            _dbContext.Database.EnsureCreated();
         }
 
         public IEnumerable<Feedback> GetAllFeedback()
         {
-            return feedbackList;
+            return _dbContext.Feedbacks.ToList();
         }
+
+        public void AddFeedback(Feedback feedback)
+        {
+            try
+            {
+                // Check for empty comment
+                if (string.IsNullOrWhiteSpace(feedback.Comment))
+                {
+                    // Throw an exception if the comment is empty
+                    throw new ArgumentException("Comment cannot be empty or whitespace.", nameof(feedback.Comment));
+                }
+
+                // Rest of your logic
+                _dbContext.Feedbacks.Add(feedback);
+                _dbContext.SaveChanges();
+            }
+            catch (ArgumentException ex)
+            {
+                // Handle the exception (log it, display a message to the user, etc.)
+                Console.WriteLine("Please provide a valid comment.");
+                // You can also throw the exception again if needed
+                // throw;
+            }
+        }
+
     }
 }
 
-/*    public class FeedbackService
-    {
-        private List<string> feedbackList = new List<string>();
-
-        public FeedbackService()
-        {
-            LoadDummyData();
-        }
-
-        private void LoadDummyData()
-        {
-            // mock data
-            feedbackList.Add("Great service, thank you!");
-            feedbackList.Add("Very satisfied with the care provided.");
-        }
-
-        public void SaveFeedback(string feedback)
-        {
-            feedbackList.Add(feedback);
-        }
-
-        public IEnumerable<string> GetAllFeedback()
-        {
-            return feedbackList;
-        }
-    }*/
 
 
 
