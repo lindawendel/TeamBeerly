@@ -11,15 +11,6 @@ namespace HealthCareTests
     {
         private readonly HealthCareContext _context;
 
-        public BookingDBTests()
-        {
-            var options = new DbContextOptionsBuilder<HealthCareContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
-
-            _context = new HealthCareContext(options);
-        }
-
         [Fact]
         public void Should_Add_Booking_To_DB()
         {
@@ -81,9 +72,6 @@ namespace HealthCareTests
             // Dispose of the context after each test
             _context.Dispose();
         }
-
-
-
 
     }
 }
