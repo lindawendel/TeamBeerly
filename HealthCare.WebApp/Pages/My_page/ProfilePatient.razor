@@ -1,0 +1,81 @@
+﻿@page "/my_page/profile"
+@inject HealthCare.Core.Data.HealthCareContext DbContext
+@using HealthCare.Core.Models
+@using System.ComponentModel.DataAnnotations
+
+<h3>Profile</h3>
+
+<EditForm Model="patient" OnValidSubmit="SavePatientProfile">
+    <DataAnnotationsValidator />
+<div>
+    <label>Name:</label>
+    <input @bind="patient.Name" />
+        <ValidationMessage For="@(() => patient.Name)" />
+</div>
+
+<div>
+    <label>Date of Birth:</label>
+    <input type="date" @bind="patient.DateOfBirth" />
+        <ValidationMessage For="@(() => patient.DateOfBirth)" />
+</div>
+
+<div>
+    <label>Phone Number:</label>
+    <input @bind="patient.PhoneNumber" />
+        <ValidationMessage For="@(() => patient.PhoneNumber)" />
+</div>
+
+<div>
+    <label>Email:</label>
+    <input type="text" @bind="patient.Email" />
+    <ValidationMessage For="@(() => patient.Email)" />
+</div>
+    <button type="submit">Save</button>
+</EditForm>
+
+@if (isSaveSuccessful)
+{
+    <p style="color: green;">Changes saved successfully!</p>
+}
+
+@code {
+
+    private Patient patient;
+    private bool isSaveSuccessful = false;
+    private ValidationMessageStore validationMessages;
+
+    protected override void OnInitialized()
+    {
+        GetPatientProfile();
+        validationMessages = new ValidationMessageStore(EditContext);
+    }
+
+    private void GetPatientProfile()
+    {
+        patient = DbContext.Patients.FirstOrDefault(); 
+    }
+
+    private void SavePatientProfile()
+    {
+        if (EditContext.Validate())
+        {
+            var existingPatient = DbContext.Patients.Find(patient.Id);
+            if (existingPatient != null)
+            {
+                existingPatient.Name = patient.Name;
+                existingPatient.DateOfBirth = patient.DateOfBirth;
+                existingPatient.PhoneNumber = patient.PhoneNumber;
+                existingPatient.Email = patient.Email;
+
+                DbContext.SaveChanges();
+
+                isSaveSuccessful = true;
+
+                // Reset flag
+                // Task.Delay(5000).ContinueWith(_ => isSaveSuccessful = false);
+            }
+        }
+    }
+
+    private EditContext EditContext => new EditContext(patient);
+}

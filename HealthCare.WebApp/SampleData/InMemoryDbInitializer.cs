@@ -77,12 +77,13 @@ public static class InMemoryDbInitializer
                 var appointment13 = new Appointment { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(26), Patient = patient13, Caregiver = caregiver1, Service = booking1.Service, Description = "Consultation with patient13" };
                 var appointment14 = new Appointment { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(28), Patient = patient14, Caregiver = caregiver2, Service = booking2.Service, Description = "Follow-up for patient14" };
                 var appointment15 = new Appointment { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(30), Patient = patient15, Caregiver = caregiver3, Service = booking3.Service, Description = "Appointment for patient15" };
+                var appointment16 = new Appointment { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(32), Patient = patient1, Caregiver = caregiver2, Service = booking2.Service, Description = "Flue-shot" };
 
                 var upcommingAppointments = new List<Appointment>
                 {
                     appointment1, appointment2, appointment3, appointment4, appointment5,
                     appointment6, appointment7, appointment8, appointment9, appointment10,
-                    appointment11, appointment12, appointment13, appointment14, appointment15,
+                    appointment11, appointment12, appointment13, appointment14, appointment15, appointment16
                 };
 
 
@@ -106,12 +107,14 @@ public static class InMemoryDbInitializer
                 var pastAppointment13 = new Appointment { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(-26), Patient = patient3, Caregiver = caregiver1, Service = booking1.Service, Description = "Past Consultation with patient13" };
                 var pastAppointment14 = new Appointment { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(-28), Patient = patient2, Caregiver = caregiver2, Service = booking2.Service, Description = "Past Follow-up for patient14" };
                 var pastAppointment15 = new Appointment { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(-30), Patient = patient1, Caregiver = caregiver3, Service = booking3.Service, Description = "Past Appointment for patient15" };
+                var pastAppointment16 = new Appointment { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(-32), Patient = patient1, Caregiver = caregiver1, Service = booking1.Service, Description = "Past Consultation with patient1" };
+
 
                 var pastAppointments = new List<Appointment>
                 {
                     pastAppointment1, pastAppointment2, pastAppointment3, pastAppointment4, pastAppointment5,
                     pastAppointment6, pastAppointment7, pastAppointment8, pastAppointment9, pastAppointment10,
-                    pastAppointment11, pastAppointment12, pastAppointment13, pastAppointment14, pastAppointment15,
+                    pastAppointment11, pastAppointment12, pastAppointment13, pastAppointment14, pastAppointment15, pastAppointment16
                 };
 
                 dbContext.Appointments.AddRange(pastAppointments);
