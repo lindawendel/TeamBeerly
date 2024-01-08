@@ -1,9 +1,9 @@
-
-﻿using HealthCare.Core.Data;
-﻿using HealthCare;
+using HealthCare.Core.Data;
+using HealthCare;
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using HealthCare.Core.Models;
+using HealthCare.Core.Data;
 
 public static class InMemoryDbInitializer
 {
@@ -85,7 +85,11 @@ public static class InMemoryDbInitializer
                     appointment11, appointment12, appointment13, appointment14, appointment15,
                 };
 
+
+
+
                 dbContext.Appointments.AddRange(upcommingAppointments);
+
 
                 var pastAppointment1 = new Appointment { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(-2), Patient = patient15, Caregiver = caregiver1, Service = booking1.Service, Description = "Past Ahoy ahoy" };
                 var pastAppointment2 = new Appointment { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(-4), Patient = patient14, Caregiver = caregiver2, Service = booking2.Service, Description = "Past Ahoy ahoy2" };
@@ -115,9 +119,17 @@ public static class InMemoryDbInitializer
                 dbContext.SaveChanges();
             }
 
-        }
 
-        
+            if (!dbContext.Feedbacks.Any())
+            {
+                dbContext.Add(new Feedback { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(6), Title = "snygge jobbe", Comment = "riktigt bra jobbat, " });
+                dbContext.Add(new Feedback { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(2), Title = "ful o dum", Comment = "riktigt... jobbat " });
+                dbContext.Add(new Feedback { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(5), Title = "hjälpte", Comment = "jösses va?" });
+
+                dbContext.SaveChanges();
+
+            }
+
+        }
     }
 }
-
