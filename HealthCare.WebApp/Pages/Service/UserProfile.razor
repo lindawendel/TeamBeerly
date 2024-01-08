@@ -1,0 +1,27 @@
+﻿@page "/UserProfile"
+@using System.Security.Claims
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+@code {
+    private string name;
+    private string emailAddress;
+    private string profileImage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        name = user.Identity?.Name;
+        emailAddress = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+        profileImage = user.Claims.FirstOrDefault(c => c.Type == "picture")?.Value;
+    }
+}
+
+<h3>User Profile</h3>
+<p>Name: @name</p>
+<p>Email: @emailAddress</p>
+@if (!string.IsNullOrEmpty(profileImage))
+{
+    <img src="@profileImage" alt="Profile Image" />
+}
