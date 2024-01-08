@@ -54,9 +54,7 @@ namespace HealthCareTests
             //ASSERT
 
             var testPatient = _context.Patients.FirstOrDefault();
-            string testPatientDateOfBirth = testPatient.DateOfBirth.ToString("yyyy-MM-dd");
-           
-
+            string testPatientDateOfBirth = testPatient.DateOfBirth.ToString("yyyy-MM-dd");     
 
             Assert.Equal(testPatientDateOfBirth, DateTime.Now.ToString("yyyy-MM-dd"));
             Assert.Equal("MIKAEL", testPatient.Name);
@@ -66,7 +64,6 @@ namespace HealthCareTests
 
         public void Dispose()
         {
-            // Dispose of the context after each test
             _context.Dispose();
         }
 
