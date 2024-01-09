@@ -1,6 +1,23 @@
 ﻿@page "/UserProfile"
 @using System.Security.Claims
+@using HealthCare.Core.Data;
+@using HealthCare.Core.Models
+@using Microsoft.EntityFrameworkCore
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject HealthCareContext DbContext
+
+<h3>User Profile</h3>
+
+<p>FullName: @fullName</p>
+<p>Firstname: @firstName</p>
+<p>Lastname: @lastName</p>
+<p>Nickname: @nickname</p>
+<p>Email: @emailAddress</p>
+
+@if (!string.IsNullOrEmpty(profileImage))
+{
+    <img src="@profileImage" alt="Profile Image" />
+}
 
 @code {
     private string fullName;
@@ -9,42 +26,37 @@
     private string nickname;
     private string emailAddress;
     private string profileImage;
+    private string auth0Id;
 
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
-        foreach (var claim in user.Claims)
-        {
-            Console.WriteLine($"{claim.Type}: {claim.Value}");
-        }
-
-
-        fullName = user.Claims.FirstOrDefault(c => c.Type == "name")?.Value
-                   ?? "Not provided";
-        firstName = user.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value
-                    ?? "Not provided";
-        lastName = user.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value
-                  ?? "Not provided";
-        nickname = user.Claims.FirstOrDefault(c => c.Type == "nickname")?.Value
-                   ?? "Not provided";
-        emailAddress = user.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value
-                       ?? user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value
-                       ?? "Not provided";
+        // Extract user information from claims
+        firstName = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName)?.Value ?? "Not provided";
+        lastName = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Surname)?.Value ?? "Not provided";
+        emailAddress = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? "Not provided";
         profileImage = user.Claims.FirstOrDefault(c => c.Type == "picture")?.Value;
+        auth0Id = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+        fullName = $"{firstName} {lastName}";
+
+        // Check and save user information in the database
+        var patient = await DbContext.Patients.FirstOrDefaultAsync(p => p.Auth0Id == auth0Id);
+        if (patient == null)
+        {
+            patient = new Patient
+                {
+                    Id = Guid.NewGuid(),
+                    Auth0Id = auth0Id,
+                    Email = emailAddress,
+                    Name = fullName,
+                    Appointments = new List<Appointment>()
+                };
+
+            DbContext.Patients.Add(patient);
+            await DbContext.SaveChangesAsync();
+        }
     }
 }
-
-<h3>User Profile</h3>
-
-@if (!string.IsNullOrEmpty(profileImage))
-{
-    <img src="@profileImage" alt="Profile Image" />
-}
-
-<p>FullName: @fullName</p>
-<p>Firstname: @firstName</p>
-<p>Lastname: @lastName</p>
-<p>Nickname: @nickname</p>
-<p>Email: @emailAddress</p>

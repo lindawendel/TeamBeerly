@@ -21,6 +21,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<HealthCareContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+
+
 builder.Services.AddScoped<FeedbackService>();
 builder.Services.AddScoped<AppointmentService>();
 builder.Services.AddScoped<BookingService>();
