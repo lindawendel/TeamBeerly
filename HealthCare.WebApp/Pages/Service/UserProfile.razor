@@ -8,16 +8,18 @@
 
 <h3>User Profile</h3>
 
+@if (!string.IsNullOrEmpty(profileImage))
+{
+    <img src="@profileImage" alt="Profile Image" />
+}
+
 <p>FullName: @fullName</p>
 <p>Firstname: @firstName</p>
 <p>Lastname: @lastName</p>
 <p>Nickname: @nickname</p>
 <p>Email: @emailAddress</p>
 
-@if (!string.IsNullOrEmpty(profileImage))
-{
-    <img src="@profileImage" alt="Profile Image" />
-}
+
 
 @code {
     private string fullName;
@@ -33,7 +35,6 @@
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
-        // Extract user information from claims
         firstName = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName)?.Value ?? "Not provided";
         lastName = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Surname)?.Value ?? "Not provided";
         emailAddress = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? "Not provided";
@@ -42,7 +43,6 @@
 
         fullName = $"{firstName} {lastName}";
 
-        // Check and save user information in the database
         var patient = await DbContext.Patients.FirstOrDefaultAsync(p => p.Auth0Id == auth0Id);
         if (patient == null)
         {

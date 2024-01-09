@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Http;
+using HealthCare.WebApp.Pages.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,8 @@ builder.Services.AddScoped<AppointmentService>();
 builder.Services.AddScoped<BookingService>();
 builder.Services.AddScoped<RatingService>();
 builder.Services.AddScoped<PatientService>();
+//builder.Services.AddScoped<UserDataService>();
+
 
 var auth0Settings = builder.Configuration.GetSection("Auth0");
 builder.Services.AddAuthentication(options =>
@@ -57,6 +60,7 @@ builder.Services.AddScoped<IAuthenticationService>(provider =>
         provider.GetRequiredService<NavigationManager>(),
         provider.GetRequiredService<IHttpContextAccessor>(),
         provider.GetRequiredService<IConfiguration>()));
+        //provider.GetRequiredService<UserDataService>()));
 
 var app = builder.Build();
 

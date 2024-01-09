@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using HealthCare.WebApp.Pages.Service;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Components;
@@ -17,15 +18,18 @@ public class AuthenticationService : IAuthenticationService
     private readonly NavigationManager _navigationManager;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IConfiguration _configuration;
+    //private readonly UserDataService _userDataService;
 
     public AuthenticationService(
         NavigationManager navigationManager,
         IHttpContextAccessor httpContextAccessor,
         IConfiguration configuration)
+        //UserDataService userDataService)
     {
         _navigationManager = navigationManager;
         _httpContextAccessor = httpContextAccessor;
         _configuration = configuration;
+        //_userDataService = userDataService;
     }
 
     public async Task Login()
@@ -33,6 +37,7 @@ public class AuthenticationService : IAuthenticationService
         var redirectUri = _navigationManager.BaseUri + "authentication/login-callback";
         var properties = new AuthenticationProperties { RedirectUri = redirectUri };
         await _httpContextAccessor.HttpContext.ChallengeAsync(OpenIdConnectDefaults.AuthenticationScheme, properties);
+        //await _userDataService.SaveUserDataAsync();
     }
 
 
