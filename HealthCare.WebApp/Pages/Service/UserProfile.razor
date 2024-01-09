@@ -3,7 +3,10 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 @code {
-    private string name;
+    private string fullName;
+    private string firstName;
+    private string lastName;
+    private string nickname;
     private string emailAddress;
     private string profileImage;
 
@@ -12,16 +15,36 @@
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
-        name = user.Identity?.Name;
-        emailAddress = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+        foreach (var claim in user.Claims)
+        {
+            Console.WriteLine($"{claim.Type}: {claim.Value}");
+        }
+
+
+        fullName = user.Claims.FirstOrDefault(c => c.Type == "name")?.Value
+                   ?? "Not provided";
+        firstName = user.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value
+                    ?? "Not provided";
+        lastName = user.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value
+                  ?? "Not provided";
+        nickname = user.Claims.FirstOrDefault(c => c.Type == "nickname")?.Value
+                   ?? "Not provided";
+        emailAddress = user.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value
+                       ?? user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value
+                       ?? "Not provided";
         profileImage = user.Claims.FirstOrDefault(c => c.Type == "picture")?.Value;
     }
 }
 
 <h3>User Profile</h3>
-<p>Name: @name</p>
-<p>Email: @emailAddress</p>
+
 @if (!string.IsNullOrEmpty(profileImage))
 {
     <img src="@profileImage" alt="Profile Image" />
 }
+
+<p>FullName: @fullName</p>
+<p>Firstname: @firstName</p>
+<p>Lastname: @lastName</p>
+<p>Nickname: @nickname</p>
+<p>Email: @emailAddress</p>
