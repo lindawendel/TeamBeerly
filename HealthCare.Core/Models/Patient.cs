@@ -10,6 +10,7 @@ namespace HealthCare.Core.Models
     public class Patient
     {
         public Guid Id { get; set; }
+        public string Auth0Id { get; set; }
 
         [Required(ErrorMessage = "Name is required")]
         public string Name { get; set; }

@@ -6,6 +6,7 @@
 @inject PatientService patientService
 @inject AppointmentService appointmentService
 @inject HealthCare.Core.Data.HealthCareContext DbContext
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <h3>My patient page</h3>
 
@@ -16,8 +17,12 @@
 
 <h4 class="MyPage">Personal</h4>
 
+@if (!string.IsNullOrEmpty(profileImage))
+{
+    <img src="@profileImage" alt="Profile Image" />
+}
+
 <div class="PatientProfile">
-    <p><label>Id: @patient.Id</label></p
     <p><label>Name: @patient.Name</label></p
     <p><label>Date of Birth: @patient.DateOfBirth.ToString("yyyy-MM-dd")</label></p
     <p><label>Phonenumber: @patient.PhoneNumber</label></p
@@ -55,14 +60,27 @@
 </div>
     
 @code {
+    private string profileImage;
     private List<Appointment> UpcomingAppointments = new List<Appointment>();
     private List<Appointment> PastAppointments = new List<Appointment>();
     private Patient patient;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        FetchUserDetails();
         GetPatient();
         GetAppointments();
+    }
+
+    private async Task FetchUserDetails()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            profileImage = user.Claims.FirstOrDefault(c => c.Type == "picture")?.Value;
+        }
     }
 
     private void GetPatient()

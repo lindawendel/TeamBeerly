@@ -1,6 +1,10 @@
-﻿@using System.Security.Claims
+﻿@* @using HealthCare.Core.Models
+@using System.Security.Claims
+@using HealthCare.Core.Data;
+@using Microsoft.EntityFrameworkCore
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IAuthenticationService AuthenticationService
+@inject HealthCareContext DbContext
 @inject NavigationManager NavigationManager
 
 <div>
@@ -22,6 +26,36 @@
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         currentUser = authState.User;
+
+        if (currentUser.Identity.IsAuthenticated)
+        {
+            var email = currentUser.FindFirst(c => c.Type == ClaimTypes.Email)?.Value;
+            var name = currentUser.FindFirst(c => c.Type == ClaimTypes.Name)?.Value;
+
+            
+            var patient = await DbContext.Patients
+                .AsNoTracking() 
+                .FirstOrDefaultAsync(p => p.Email == email);
+
+            if (patient == null)
+            {        
+                patient = new Patient
+                    {
+                        Id = Guid.NewGuid(),
+                        Email = email,
+                        Name = name,
+                        Appointments = new List<Appointment>()
+                    };
+
+                DbContext.Patients.Add(patient);
+            }
+            else
+            {
+                patient.Name = name;
+            }
+
+            await DbContext.SaveChangesAsync();
+        }
     }
 
     private async Task Login()
@@ -34,3 +68,4 @@
         await AuthenticationService.Logout();
     }
 }
+ *@
