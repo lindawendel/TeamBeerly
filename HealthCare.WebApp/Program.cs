@@ -29,7 +29,7 @@ builder.Services.AddScoped<AppointmentService>();
 builder.Services.AddScoped<BookingService>();
 builder.Services.AddScoped<RatingService>();
 builder.Services.AddScoped<PatientService>();
-//builder.Services.AddScoped<UserDataService>();
+builder.Services.AddScoped<UserDataService>();
 
 
 var auth0Settings = builder.Configuration.GetSection("Auth0");
@@ -59,8 +59,8 @@ builder.Services.AddScoped<IAuthenticationService>(provider =>
     new AuthenticationService(
         provider.GetRequiredService<NavigationManager>(),
         provider.GetRequiredService<IHttpContextAccessor>(),
-        provider.GetRequiredService<IConfiguration>()));
-        //provider.GetRequiredService<UserDataService>()));
+        provider.GetRequiredService<IConfiguration>(),
+        provider.GetRequiredService<UserDataService>()));
 
 var app = builder.Build();
 

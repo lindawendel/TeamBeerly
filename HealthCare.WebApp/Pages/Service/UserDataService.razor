@@ -1,0 +1,58 @@
+﻿@using HealthCare.Core.Data
+@using System.Security.Claims
+@using HealthCare.Core.Models
+@page "/userdata-service"
+@using Microsoft.EntityFrameworkCore
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject HealthCareContext DbContext
+@inject NavigationManager NavigationManager
+
+@code {
+
+	private string fullName;
+	private string firstName;
+	private string lastName;
+	private string nickname;
+	private string emailAddress;
+	private string profileImage;
+	private string auth0Id;
+
+	protected override async Task OnInitializedAsync()
+	{
+		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		var user = authState.User;
+
+		if (user.Identity.IsAuthenticated)
+		{
+
+			firstName = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName)?.Value ?? "Not provided";
+			lastName = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Surname)?.Value ?? "Not provided";
+			emailAddress = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? "Not provided";
+			profileImage = user.Claims.FirstOrDefault(c => c.Type == "picture")?.Value;
+			auth0Id = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+			fullName = $"{firstName} {lastName}";
+
+			var patient = await DbContext.Patients.FirstOrDefaultAsync(p => p.Auth0Id == auth0Id);
+			if (patient == null)
+			{
+				patient = new Patient
+					{
+						Id = Guid.NewGuid(),
+						Auth0Id = auth0Id,
+						Email = emailAddress,
+						Name = fullName,
+						Appointments = new List<Appointment>()
+					};
+				DbContext.Patients.Add(patient);
+				await DbContext.SaveChangesAsync();
+			}
+
+			NavigationManager.NavigateTo("/");
+		}
+		else
+		{
+			NavigationManager.NavigateTo("/login");
+		}
+	}
+}

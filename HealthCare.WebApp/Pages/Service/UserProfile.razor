@@ -1,4 +1,4 @@
-﻿@page "/UserProfile"
+﻿@* @page "/UserProfile"
 @using System.Security.Claims
 @using HealthCare.Core.Data;
 @using HealthCare.Core.Models
@@ -60,3 +60,21 @@
         }
     }
 }
+
+@* 
+    gammla skiten, spara lite
+
+        firstName = user.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value
+			?? "Not provided";
+lastName = user.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value
+				?? "Not provided";
+nickname = user.Claims.FirstOrDefault(c => c.Type == "nickname")?.Value
+					?? "Not provided";
+emailAddress = user.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value
+						?? user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+auth0Id = user.Claims
+	.Where(c => c.Type.Equals(@"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"))
+	.Select(c => c.Value)
+	.FirstOrDefault() ?? string.Empty;
+
+var patient = await DbContext.Patients.FirstOrDefaultAsync(p => p.Auth0Id == auth0Id); *@

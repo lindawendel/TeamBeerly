@@ -18,26 +18,25 @@ public class AuthenticationService : IAuthenticationService
     private readonly NavigationManager _navigationManager;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IConfiguration _configuration;
-    //private readonly UserDataService _userDataService;
+    private readonly UserDataService _userDataService;
 
     public AuthenticationService(
         NavigationManager navigationManager,
         IHttpContextAccessor httpContextAccessor,
-        IConfiguration configuration)
-        //UserDataService userDataService)
+        IConfiguration configuration,
+        UserDataService userDataService)
     {
         _navigationManager = navigationManager;
         _httpContextAccessor = httpContextAccessor;
         _configuration = configuration;
-        //_userDataService = userDataService;
+        _userDataService = userDataService;
     }
 
     public async Task Login()
     {
-        var redirectUri = _navigationManager.BaseUri + "authentication/login-callback";
+        var redirectUri = _navigationManager.BaseUri + "userdata-service";
         var properties = new AuthenticationProperties { RedirectUri = redirectUri };
         await _httpContextAccessor.HttpContext.ChallengeAsync(OpenIdConnectDefaults.AuthenticationScheme, properties);
-        //await _userDataService.SaveUserDataAsync();
     }
 
 
