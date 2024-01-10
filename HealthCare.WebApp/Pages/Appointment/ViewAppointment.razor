@@ -6,7 +6,7 @@
 
 <h3>View Appointment Details</h3>
 
-<label for="appointmentId">Appointment ID:</label>
+@* <label for="appointmentId">Appointment ID:</label>
 <input id="appointmentId" @bind="appointmentId" />
 
 <button @onclick="LoadAppointment">View Details</button>
@@ -17,7 +17,7 @@
         <p>ID: @appointmentDetails.Id</p>
         <p>Patient: @appointmentDetails.Patient.Name</p>
         <p>Caregiver: @appointmentDetails.Caregiver.Name</p>
-        <p>Time: @appointmentDetails.Time</p>
+        <p>Time: @appointmentDetails.StartTime</p>
         <p>Service: @appointmentDetails.Service</p>
         <p>Description: @appointmentDetails.Description</p>
     </div>
@@ -25,11 +25,11 @@
 else
 {
     <p>No appointment details found.</p>
-}
+} *@
 
 <div id='calendar'></div>
 
-@code {
+@* @code {
     private string appointmentId;
     private Appointment appointmentDetails;
 
@@ -45,13 +45,13 @@ else
             
             appointmentDetails = null;
         }
-    }
+    } *@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await JSRuntime.InvokeVoidAsync("initializeCalendar");
+            await JSRuntime.InvokeVoidAsync("initializeCalendar", "patients");
         }
     }
 }

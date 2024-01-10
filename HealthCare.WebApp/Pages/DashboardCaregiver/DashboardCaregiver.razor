@@ -7,7 +7,7 @@
 
 <div>
     <h5>Schedule</h5>
-    <NavLink class="nav-link" href="dashboard">Manage Availability</NavLink>
+    <NavLink class="nav-link" href="Caregiver_CalendarView">Manage Availability</NavLink>
 </div>
 
 <div class="upcomingApointments">
@@ -15,7 +15,7 @@
     <ol>
         @foreach (var appointment in UpcomingAppointments)
         {
-            <li>@appointment.Time @appointment.Patient.Name</li>
+            <li>@appointment.StartTime @appointment.Patient.Name</li>
         }
     </ol>
 </div>
@@ -25,7 +25,7 @@
     <ol>
         @foreach (var appointment in PastAppointments)
         {
-            <li>@appointment.Time @appointment.Patient.Name</li>
+            <li>@appointment.StartTime @appointment.Patient.Name</li>
         }
     </ol>
 </div>
@@ -59,15 +59,15 @@
         if (Caregiver != null)
         {
             UpcomingAppointments = DbContext.Appointments
-                .Where(a => a.Time > now && a.Caregiver.Id == Caregiver.Id)
+                .Where(a => a.StartTime > now && a.Caregiver.Id == Caregiver.Id)
                 .Include(a => a.Patient)
-                .OrderBy(a => a.Time)
+                .OrderBy(a => a.StartTime)
                 .ToList();
 
             PastAppointments = DbContext.Appointments
-                .Where(a => a.Time < now && a.Caregiver.Id == Caregiver.Id)
+                .Where(a => a.StartTime < now && a.Caregiver.Id == Caregiver.Id)
                 .Include(a => a.Patient)
-                .OrderByDescending(a => a.Time)
+                .OrderByDescending(a => a.StartTime)
                 .ToList();
         }
     }

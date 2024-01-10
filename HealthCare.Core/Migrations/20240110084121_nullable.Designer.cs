@@ -4,6 +4,7 @@ using HealthCare.Core.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HealthCare.Core.Migrations
 {
     [DbContext(typeof(HealthCareContext))]
-    partial class HealthCareContextModelSnapshot : ModelSnapshot
+    [Migration("20240110084121_nullable")]
+    partial class nullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,19 +48,13 @@ namespace HealthCare.Core.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("EndTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsBooked")
-                        .HasColumnType("bit");
-
                     b.Property<Guid?>("PatientId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Service")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("StartTime")
+                    b.Property<DateTime>("Time")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
