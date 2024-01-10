@@ -88,6 +88,7 @@
             console.error("Calendar element not found");
         }
     };
+
     window.addAppointmentSlotToCalendar = (slot) => {
         console.log("Adding appointment slot to calendar", slot);
         console.log("Received slot data:", slot);
@@ -102,6 +103,27 @@
             });
         }
     };
+
+    window.updateCalendarAppointments = (appointments) => {
+        console.log("Updating calendar with appointments", appointments);
+        if (calendar) {
+            // Clear existing events
+            calendar.removeAllEvents();
+
+            // Add new events
+            for (const appointment of appointments) {
+                calendar.addEvent({
+                    title: 'Available',
+                    start: appointment.startTime,
+                    end: appointment.endTime,
+                    backgroundColor: 'green',
+                    borderColor: 'green',
+                    editable: true,
+                });
+            }
+        }
+    };
+
 }   else {
     console.error("FullCalendar not found. Make sure it's properly loaded.");
 }

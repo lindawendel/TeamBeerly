@@ -26,8 +26,8 @@ builder.Services.AddDbContext<HealthCareContext>(options =>
 
 //InMemoryDbInitializer.Initialize(builder.Services.BuildServiceProvider());
 
-//builder.Services.AddControllers();
-//builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
 
 // Scoped services
 
@@ -37,6 +37,8 @@ builder.Services.AddScoped<BookingService>();
 builder.Services.AddScoped<RatingService>();
 builder.Services.AddScoped<PatientService>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+builder.Services.AddScoped<UserDataService>();
+
 
 builder.Services.AddScoped<HttpClient>(s =>
 {
@@ -44,9 +46,9 @@ builder.Services.AddScoped<HttpClient>(s =>
     return httpClient;
 });
 
-builder.Services.AddScoped<UserDataService>();
 
 var auth0Settings = builder.Configuration.GetSection("Auth0");
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
