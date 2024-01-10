@@ -15,6 +15,12 @@
 <select @bind="selectedService" title="hej">
     <option value="General Checkup">General Checkup</option>
     <option value="Vaccination">Vaccination</option>
+    <option value="Amputation">Amputation</option>
+    <option value="Lobotomy">Lobotomy</option>
+    <option value="Mercury Treatment">Mercury Treatment</option>
+    <option value="Leech Therapy">Leech Therapy</option>
+    <option value="Electroshock Therapy">Electroshock Therapy</option>
+
 </select>
 <button @onclick="BookAppointment">Book</button>
 
@@ -24,7 +30,7 @@
 }
 
 @code {
-    private DateTime selectedTime;
+    private DateTime selectedTime = DateTime.Now;
     private Patient patient;
     private string selectedService = "General Checkup";
     private bool isSaveSuccessful = false;
@@ -41,8 +47,6 @@
             var auth0Id = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
             patient = DbContext.Patients.FirstOrDefault(p => p.Auth0Id == auth0Id);
-
-            selectedTime = DateTime.Now;
         }
     }
 
