@@ -137,7 +137,9 @@ namespace HealthCare.Core.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
+                    b.Property<string>("Auth0Id")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
 

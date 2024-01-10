@@ -12,24 +12,25 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.OpenApi.Models;
+using HealthCare.WebApp.Pages.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddHttpContextAccessor();
 
-// Configure SQL LocalDB
 builder.Services.AddDbContext<HealthCareContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-InMemoryDbInitializer.Initialize(builder.Services.BuildServiceProvider());
 
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
+//InMemoryDbInitializer.Initialize(builder.Services.BuildServiceProvider());
+
+//builder.Services.AddControllers();
+//builder.Services.AddEndpointsApiExplorer();
 
 // Scoped services
+
 builder.Services.AddScoped<FeedbackService>();
 builder.Services.AddScoped<AppointmentService>();
 builder.Services.AddScoped<BookingService>();
@@ -43,7 +44,8 @@ builder.Services.AddScoped<HttpClient>(s =>
     return httpClient;
 });
 
-// Authentication configuration
+builder.Services.AddScoped<UserDataService>();
+
 var auth0Settings = builder.Configuration.GetSection("Auth0");
 builder.Services.AddAuthentication(options =>
 {
@@ -54,22 +56,26 @@ builder.Services.AddAuthentication(options =>
 .AddCookie()
 .AddOpenIdConnect(options =>
 {
+    options.ResponseType = "code id_token";
+    options.SaveTokens = true;
     options.Authority = $"https://{auth0Settings["Domain"]}";
     options.ClientId = auth0Settings["ClientId"];
     options.ClientSecret = auth0Settings["ClientSecret"];
-    options.ResponseType = "code";
     options.Scope.Clear();
     options.Scope.Add("openid");
+    options.Scope.Add("profile");
+    options.Scope.Add("email");
     options.CallbackPath = new PathString("/callback");
     options.ClaimsIssuer = "Auth0";
 });
 
-// Custom authentication service
 builder.Services.AddScoped<IAuthenticationService>(provider =>
     new AuthenticationService(
         provider.GetRequiredService<NavigationManager>(),
         provider.GetRequiredService<IHttpContextAccessor>(),
-        provider.GetRequiredService<IConfiguration>()));
+        provider.GetRequiredService<IConfiguration>(),
+        provider.GetRequiredService<UserDataService>()));
+
 
 // Temporary - not secure!
 builder.Services.AddCors(options =>
@@ -89,9 +95,9 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // Building the web application
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");

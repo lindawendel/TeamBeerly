@@ -11,16 +11,6 @@ namespace HealthCare.Core.Data
         {
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer(
-                    "ConnectionStrings",
-                    b => b.MigrationsAssembly("HealthCare.Core"));
-            }
-        }
-
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Patient> Patients { get; set; }
