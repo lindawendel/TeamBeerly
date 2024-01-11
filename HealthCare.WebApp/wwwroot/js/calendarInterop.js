@@ -2,7 +2,6 @@
 if (window.FullCalendar) {
     var calendar;
 
-    /*window.initializeCalendar = (viewType) => {*/
     window.initializeCalendar = (viewType, dotnetReference) => {
         console.log("Initializing Calendar");
 
@@ -33,14 +32,14 @@ if (window.FullCalendar) {
 
                     if (viewType === 'patients') {
 
-                        var title = prompt('Event Title:');
-                        if (title) {
-                            calendar.addEvent({
-                                title: title,
-                                start: info.start,
-                                end: info.end
-                            });
-                        }
+                        //var title = prompt('Event Title:');
+                        //if (title) {
+                        //    calendar.addEvent({
+                        //        title: title,
+                        //        start: info.start,
+                        //        end: info.end
+                        //    });
+                        //}
                     } else if (viewType === 'caregivers') {
 
                         var confirmAdd = confirm('Do you want to add this time slot?');

@@ -3,7 +3,7 @@
 @using Microsoft.AspNetCore.Components
 @using HealthCare.Core.Models
 @inject IJSRuntime JSRuntime
-@inject IAppointmentService AppointmentService 
+@inject IAppointmentService AppointmentService
 @inject HealthCare.Core.Data.HealthCareContext DbContext
 @inject HttpClient httpClient
 @layout MainLayout
@@ -100,15 +100,14 @@
         }
         catch (Exception Ex)
         {
-            
+
         }
     }
 
-
-        [JSInvokable]
-        public async Task AddAppointmentFromCalendar(DateTime startTime, DateTime endTime)
-        {
-            var newAppointment = new Appointment
+    [JSInvokable]
+    public async Task AddAppointmentFromCalendar(DateTime startTime, DateTime endTime)
+    {
+        var newAppointment = new Appointment
             {
                 StartTime = startTime,
                 EndTime = endTime,
@@ -126,32 +125,6 @@
 
         StateHasChanged();
 
-        }
-
-
-
-
-    // [JSInvokable]
-    // public async Task AddAppointmentFromCalendar(object slot)
-    // {
-    //     try
-    //     {
-    //         // Deserialize the slot object and perform necessary actions
-    //         // For example, cast it to a Dictionary<string, object>
-    //         var slotData = slot as Dictionary<string, object>;
-
-    //         // Create a new Appointment instance and set properties based on slotData
-    //         var newAppointment = new Appointment
-    //         {
-    //             // Set properties based on slotData...
-    //         };
-
-    //         // Call your existing method to save the appointment to the database
-    //         await AppointmentService.AddAppointment(newAppointment);
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         // Handle exception (log, show message, etc.)
-    //     }
-    // }
+    }
+   
 }

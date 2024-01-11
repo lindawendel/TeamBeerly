@@ -44,36 +44,9 @@ namespace HealthCare.Core
         }
 
 
-        //AS OF RIGHT NOW
-        //public async task addappointment(appointment newappointment)
-        //{
-        //    // set caregiver id for the new appointment
-        //    newappointment.caregiver.id = database.caregivers.firstordefault().id;
-
-        //    // add the new appointment to the database
-        //    database.appointments.add(newappointment);
-        //    await database.savechangesasync();
-        //}
-
+        
     }
 
-    //private readonly HealthCareContext _dbContext;
-
-    //public AppointmentService(HealthCareContext dbContext)
-    //{
-    //         _dbContext = dbContext;
-    //}
-
-    //     public Appointment GetAppointment(Guid appointmentId)
-    //     {
-    //     return _dbContext.Appointments.FirstOrDefault(a => a.Id == appointmentId);
-    //     }
-
-    // public List<Appointment> GetAppointmentsByPatientId(Guid patientId) 
-    // {
-    //     return _dbContext.Appointments.Include(a => a.Caregiver).Where(a => a.Patient.Id == patientId).ToList();
-
-    // }
 }
 
 
