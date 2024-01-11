@@ -26,16 +26,34 @@ namespace HealthCare.Core
         }
 
 
-        //AS OF RIGHT NOW
         public async Task AddAppointment(Appointment newAppointment)
         {
-            // Set caregiver ID for the new appointment
-            newAppointment.Caregiver.Id = database.Caregivers.FirstOrDefault().Id;
+            try
+            {
+                // Set caregiver for the new appointment
+                newAppointment.Caregiver = database.Caregivers.FirstOrDefault();
 
-            // Add the new appointment to the database
-            database.Appointments.Add(newAppointment);
-            await database.SaveChangesAsync();
+                // Add the new appointment to the database
+                database.Appointments.Add(newAppointment);
+                await database.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                // Handle exception (log, show message, etc.)
+            }
         }
+
+
+        //AS OF RIGHT NOW
+        //public async task addappointment(appointment newappointment)
+        //{
+        //    // set caregiver id for the new appointment
+        //    newappointment.caregiver.id = database.caregivers.firstordefault().id;
+
+        //    // add the new appointment to the database
+        //    database.appointments.add(newappointment);
+        //    await database.savechangesasync();
+        //}
 
     }
 

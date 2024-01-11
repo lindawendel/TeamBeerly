@@ -2,11 +2,11 @@
 if (window.FullCalendar) {
     var calendar;
 
-    window.initializeCalendar = (viewType) => {
+    /*window.initializeCalendar = (viewType) => {*/
+    window.initializeCalendar = (viewType, dotnetReference) => {
         console.log("Initializing Calendar");
 
         var calendarEl = document.getElementById('calendar');
-        /*var calendar;*/
 
         // Define calendarOptions with default values
         var calendarOptions = {
@@ -25,31 +25,38 @@ if (window.FullCalendar) {
             },
             selectable: true,
             select: function (info) {
-                if (calendar && viewType === 'patients') {
-
-                    var title = prompt('Event Title:');
-                    if (title) {
-                        calendar.addEvent({
-                            title: title,
-                            start: info.start,
-                            end: info.end
-                        });
-                    }
-                } else if (calendar && viewType === 'caregivers') {
-
-                    var confirmAdd = confirm('Do you want to add this time slot?');
-                    if (confirmAdd) {
-                        calendar.addEvent({
-                            title: 'Available',
-                            start: info.start,
-                            end: info.end,
-                            backgroundColor: 'green',
-                            borderColor: 'green',
-                            editable: true,
-                        });
-                    }
-                }
                 if (calendar) {
+                    var slot = {
+                        startTime: info.start,
+                        endTime: info.end
+                    };
+
+                    if (viewType === 'patients') {
+
+                        var title = prompt('Event Title:');
+                        if (title) {
+                            calendar.addEvent({
+                                title: title,
+                                start: info.start,
+                                end: info.end
+                            });
+                        }
+                    } else if (viewType === 'caregivers') {
+
+                        var confirmAdd = confirm('Do you want to add this time slot?');
+                        if (confirmAdd) {
+                            calendar.addEvent({
+                                title: 'Available',
+                                start: info.start,
+                                end: info.end,
+                                backgroundColor: 'green',
+                                borderColor: 'green',
+                                editable: true,
+                            });
+                            dotnetReference.invokeMethodAsync('AddAppointmentFromCalendar', slot.startTime, slot.endTime);
+                        }
+                    }
+
                     calendar.unselect();
                 }
             },
@@ -125,6 +132,6 @@ if (window.FullCalendar) {
         }
     };
 
-}   else {
+} else {
     console.error("FullCalendar not found. Make sure it's properly loaded.");
 }

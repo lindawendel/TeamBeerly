@@ -43,7 +43,7 @@
             if (isInitialized)
             {
                 // Initialize FullCalendar
-                await JSRuntime.InvokeVoidAsync("initializeCalendar", "caregivers");
+                await JSRuntime.InvokeVoidAsync("initializeCalendar", "caregivers", DotNetObjectReference.Create(this));
             }
             else
             {
@@ -74,16 +74,47 @@
         }
         catch (Exception ex)
         {
-            
+
 
         }
     }
 
     private async Task AddAppointmentSlot()
     {
-        newAppointment.Caregiver = DbContext.Caregivers.FirstOrDefault();
 
-        // Add the new appointment to the database
+        try
+        {
+            newAppointment.Caregiver = DbContext.Caregivers.FirstOrDefault();
+
+            // Add the new appointment to the database
+            await AppointmentService.AddAppointment(newAppointment);
+
+            // Update FullCalendar
+            await JSRuntime.InvokeVoidAsync("addAppointmentSlotToCalendar", newAppointment);
+
+            // Clear the form and reload appointments
+            newAppointment = new Appointment();
+            await LoadCaregiverAppointments();
+
+            StateHasChanged();
+        }
+        catch (Exception Ex)
+        {
+            
+        }
+    }
+
+
+        [JSInvokable]
+        public async Task AddAppointmentFromCalendar(DateTime startTime, DateTime endTime)
+        {
+            var newAppointment = new Appointment
+            {
+                StartTime = startTime,
+                EndTime = endTime,
+                // Other properties initialization as needed
+            };
+
         await AppointmentService.AddAppointment(newAppointment);
 
         // Update FullCalendar
@@ -94,5 +125,33 @@
         await LoadCaregiverAppointments();
 
         StateHasChanged();
-    }
+
+        }
+
+
+
+
+    // [JSInvokable]
+    // public async Task AddAppointmentFromCalendar(object slot)
+    // {
+    //     try
+    //     {
+    //         // Deserialize the slot object and perform necessary actions
+    //         // For example, cast it to a Dictionary<string, object>
+    //         var slotData = slot as Dictionary<string, object>;
+
+    //         // Create a new Appointment instance and set properties based on slotData
+    //         var newAppointment = new Appointment
+    //         {
+    //             // Set properties based on slotData...
+    //         };
+
+    //         // Call your existing method to save the appointment to the database
+    //         await AppointmentService.AddAppointment(newAppointment);
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         // Handle exception (log, show message, etc.)
+    //     }
+    // }
 }
