@@ -1,4 +1,5 @@
 ﻿@page "/dashboard"
+@attribute [Authorize]
 @inject HealthCare.Core.Data.HealthCareContext DbContext
 @using HealthCare.Core.Models
 @using Microsoft.EntityFrameworkCore
