@@ -26,7 +26,7 @@ namespace HealthCare.Core
         public void AddBooking(Booking booking)
         {
             _dbContext.Bookings.Add(booking);
-            _dbContext.SaveChanges();
+           _dbContext.SaveChanges();
         }
     }
 }

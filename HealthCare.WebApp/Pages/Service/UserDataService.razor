@@ -33,7 +33,7 @@
 
 			fullName = $"{firstName} {lastName}";
 
-			var patient = await DbContext.Patients.FirstOrDefaultAsync(p => p.Auth0Id == auth0Id);
+			var patient = DbContext.Patients.FirstOrDefault(p => p.Auth0Id == auth0Id);
 			if (patient == null)
 			{
 				patient = new Patient

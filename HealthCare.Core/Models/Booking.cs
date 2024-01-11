@@ -5,7 +5,7 @@ namespace HealthCare.Core.Models
     {
         public Guid Id { get; set; }
         public DateTime Time { get; set; }
-        public Patient Patient { get; set; }
+        public Guid PatientId { get; set; }
         public string Service { get; set; }
         //public bool IsBooked { get; set; } = false;
     }

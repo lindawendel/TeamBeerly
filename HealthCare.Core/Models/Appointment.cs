@@ -16,13 +16,5 @@ namespace HealthCare.Core.Models
         public string? Service {  get; set; }
         public string? Description { get; set; }
         public bool IsBooked { get; set; } = false;
-
-
-        //suggested changes
-
-        //public Guid Id { get; set; }
-        //public Caregiver Caregiver { get; set; }
-        //public DateTime Time { get; set; }
-        // public Booking Booking
     }
 }

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HealthCare.Core.Migrations
 {
     [DbContext(typeof(HealthCareContext))]
-    [Migration("20240111101748_init")]
+    [Migration("20240111113535_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -90,8 +90,6 @@ namespace HealthCare.Core.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PatientId");
-
                     b.ToTable("Bookings");
                 });
 
@@ -101,12 +99,26 @@ namespace HealthCare.Core.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Auth0Id")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -195,17 +207,6 @@ namespace HealthCare.Core.Migrations
                         .HasForeignKey("PatientId");
 
                     b.Navigation("Caregiver");
-
-                    b.Navigation("Patient");
-                });
-
-            modelBuilder.Entity("HealthCare.Core.Models.Booking", b =>
-                {
-                    b.HasOne("HealthCare.Core.Models.Patient", "Patient")
-                        .WithMany()
-                        .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("Patient");
                 });
