@@ -7,28 +7,30 @@
 
 <div>
     <h5>Schedule</h5>
-    <NavLink class="nav-link" href="dashboard">Manage Availability</NavLink>
+    <NavLink class="nav-link" href="Caregiver_CalendarView">Manage Availability</NavLink>
 </div>
 
-<div class="upcomingApointments">
+@* CRASHES RIGHT NOW IF THIS IS RUN, BUT DO NOT REMOVE *@
+
+@* <div class="upcomingApointments">
     <h5>Upcoming Appointments</h5>
     <ol>
         @foreach (var appointment in UpcomingAppointments)
         {
-            <li>@appointment.Time @appointment.Patient.Name</li>
+            <li>@appointment.StartTime @appointment.Patient.Name</li>
         }
     </ol>
-</div>
+</div> *@
 
-<div class="pastAppointments">
+@* <div class="pastAppointments">
     <h5>Past Appointments</h5>
     <ol>
         @foreach (var appointment in PastAppointments)
         {
-            <li>@appointment.Time @appointment.Patient.Name</li>
+            <li>@appointment.StartTime @appointment.Patient.Name</li>
         }
     </ol>
-</div>
+</div> *@
 
 <div class="profile">
     <h5>Profile</h5>
@@ -43,8 +45,37 @@
 
     protected override void OnInitialized()
     {
+        SeedData();
         GetCaregiver();
         GetAppointments();
+    }
+
+    private void SeedData()
+    {
+        // using (var scope = serviceProvider.CreateScope())
+        // {
+        //     var dbContext = scope.ServiceProvider.GetRequiredService<HealthCareContext>();
+
+        //     if (!dbContext.Caregivers.Any())
+        //     {
+
+
+        //     }
+
+        if (!DbContext.Caregivers.Any())
+        {
+            var caregiver1 = new Caregiver { Id = Guid.NewGuid(), Name = "Emma Engberg", Email = "emma.e@example.com", };
+            var caregiver2 = new Caregiver { Id = Guid.NewGuid(), Name = "Marcus Nilsson", Email = "marcus.n@example.com" };
+            var caregiver3 = new Caregiver { Id = Guid.NewGuid(), Name = "Sandra Ask", Email = "sandra.a@example.com" };
+
+            DbContext.Caregivers.Add(caregiver1);
+            DbContext.Caregivers.Add(caregiver2);
+            DbContext.Caregivers.Add(caregiver3);
+
+            DbContext.SaveChanges();
+        }
+
+
     }
 
     private void GetCaregiver()
@@ -59,15 +90,15 @@
         if (Caregiver != null)
         {
             UpcomingAppointments = DbContext.Appointments
-                .Where(a => a.Time > now && a.Caregiver.Id == Caregiver.Id)
+                .Where(a => a.StartTime > now && a.Caregiver.Id == Caregiver.Id)
                 .Include(a => a.Patient)
-                .OrderBy(a => a.Time)
+                .OrderBy(a => a.StartTime)
                 .ToList();
 
             PastAppointments = DbContext.Appointments
-                .Where(a => a.Time < now && a.Caregiver.Id == Caregiver.Id)
+                .Where(a => a.StartTime < now && a.Caregiver.Id == Caregiver.Id)
                 .Include(a => a.Patient)
-                .OrderByDescending(a => a.Time)
+                .OrderByDescending(a => a.StartTime)
                 .ToList();
         }
     }

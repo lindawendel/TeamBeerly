@@ -1,0 +1,97 @@
+﻿@using Microsoft.AspNetCore.Components
+@using HealthCare.Core.Models
+@page "/Caregiver_CalendarView"
+@inject IJSRuntime JSRuntime
+@inject IAppointmentService AppointmentService 
+@inject HealthCare.Core.Data.HealthCareContext DbContext
+@inject HttpClient httpClient
+@layout MainLayout
+
+
+<h3>Caregiver Availability Management</h3>
+
+<!-- Form for adding new appointment slot -->
+<form @onsubmit="AddAppointmentSlot">
+    <label>Start Time:<input type="datetime-local" @bind="newAppointment.StartTime" required /></label>
+
+    <label>End Time:<input type="datetime-local" @bind="newAppointment.EndTime" required /></label>
+
+    <button type="submit">Add Slot</button>
+</form>
+
+<!-- FullCalendar to display existing appointment slots -->
+<div id='calendar'></div>
+
+@code {
+    private List<Appointment> caregiverAppointments = new List<Appointment>();
+    private Appointment newAppointment = new Appointment();
+    private bool isInitialized = false;
+
+    protected override void OnInitialized()
+    {
+        // Fetch and load existing caregiver appointments
+        Task.Run(async () => await LoadCaregiverAppointments());
+        isInitialized = true;
+
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (isInitialized)
+            {
+                // Initialize FullCalendar
+                await JSRuntime.InvokeVoidAsync("initializeCalendar", "caregivers");
+            }
+            else
+            {
+                // Handle the case where initialization is not complete
+            }
+        }
+        // Fetch and load existing caregiver appointments
+        await LoadCaregiverAppointments();
+
+        // Update FullCalendar
+        await JSRuntime.InvokeVoidAsync("updateCalendarAppointments", caregiverAppointments);
+    }
+
+    private async Task LoadCaregiverAppointments()
+    {
+        try
+        {
+            Guid caregiverId = DbContext.Caregivers.FirstOrDefault()?.Id ?? Guid.Empty;
+
+            if (caregiverId != Guid.Empty)
+            {
+                caregiverAppointments = await AppointmentService.GetCaregiverAppointments(caregiverId);
+            }
+            else
+            {
+                // Handle the case where caregiverId is not available
+            }
+        }
+        catch (Exception ex)
+        {
+            
+
+        }
+    }
+
+    private async Task AddAppointmentSlot()
+    {
+        newAppointment.Caregiver = DbContext.Caregivers.FirstOrDefault();
+
+        // Add the new appointment to the database
+        await AppointmentService.AddAppointment(newAppointment);
+
+        // Update FullCalendar
+        await JSRuntime.InvokeVoidAsync("addAppointmentSlotToCalendar", newAppointment);
+
+        // Clear the form and reload appointments
+        newAppointment = new Appointment();
+        await LoadCaregiverAppointments();
+
+        StateHasChanged();
+    }
+}

@@ -10,7 +10,6 @@ namespace HealthCare.Core.Data
             : base(options)
         {
         }
-
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Patient> Patients { get; set; }
