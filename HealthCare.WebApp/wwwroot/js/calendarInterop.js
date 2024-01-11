@@ -16,6 +16,7 @@ if (window.FullCalendar) {
                 minute: '2-digit',
                 hour12: false
             },
+            timeZone: 'Europe/Stockholm', 
             /*slotLabelInterval: '00:45:00',*/
             businessHours: {
                 daysOfWeek: [1, 2, 3, 4, 5],
@@ -83,7 +84,7 @@ if (window.FullCalendar) {
                     (end.getMinutes() % 45 != 15)
                 );
             };
-            Object.assign(calendarOptions, { businessHours: businessHours, slotMinTime: '09:00', slotMaxTime: '15:00', selectAllow: selectAllow });
+            Object.assign(calendarOptions, { businessHours: businessHours, slotMinTime: '09:00', slotMaxTime: '15:00', selectAllow: selectAllow, timeZone: 'Europe/Stockholm'});
         }
 
         if (calendarEl) {
