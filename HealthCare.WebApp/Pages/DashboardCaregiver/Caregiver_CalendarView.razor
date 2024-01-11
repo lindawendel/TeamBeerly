@@ -13,10 +13,8 @@
 <!-- Form for adding new appointment slot -->
 <form @onsubmit="AddAppointmentSlot">
     <label>Start Time:<input type="datetime-local" @bind="newAppointment.StartTime" required /></label>
-    @* <input type="datetime-local" @bind="newAppointment.StartTime" required /> *@
 
     <label>End Time:<input type="datetime-local" @bind="newAppointment.EndTime" required /></label>
-   @*  //<input type="datetime-local" @bind="newAppointment.EndTime" required /> *@
 
     <button type="submit">Add Slot</button>
 </form>
@@ -29,20 +27,12 @@
     private Appointment newAppointment = new Appointment();
     private bool isInitialized = false;
 
-    // protected override async Task OnInitializedAsync()
-    // {
-    //     // Fetch and load existing caregiver appointments
-    //     await LoadCaregiverAppointments();
-    //     isInitialized = true;
-    // }
-
     protected override void OnInitialized()
     {
         // Fetch and load existing caregiver appointments
         Task.Run(async () => await LoadCaregiverAppointments());
         isInitialized = true;
 
-        //Task.Run(async () => await JSRuntime.InvokeVoidAsync("updateCalendarAppointments", caregiverAppointments));
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -105,125 +95,3 @@
         StateHasChanged();
     }
 }
-
-
-
-@* @code {
-    private List<Appointment> caregiverAppointments = new List<Appointment>();
-    private Appointment newAppointment = new Appointment();
-
-    protected override async Task OnInitializedAsync()
-    {
-        // Fetch and load existing caregiver appointments
-        await LoadCaregiverAppointments();
-
-        // // Initialize FullCalendar
-        // await JSRuntime.InvokeVoidAsync("initializeCalendar", "caregivers");
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            // Initialize FullCalendar
-            await JSRuntime.InvokeVoidAsync("initializeCalendar", "caregivers");
-        }
-    }
-
-    private async Task LoadCaregiverAppointments()
-    {
-        // Fetch caregiver's appointments from the API
-
-        Guid caregiverId = DbContext.Caregivers.FirstOrDefault().Id ;  //TEMPORARY
-        //caregiverAppointments = await httpClient.GetFromJsonAsync<List<Appointment>>($"api/caregivers/{caregiverId}/appointments");
-         caregiverAppointments = await AppointmentService.GetCaregiverAppointments(caregiverId);
-    }
-
-    private async Task AddAppointmentSlot()
-    {
-        // // Set caregiver ID for the new appointment
-        // newAppointment.Caregiver.Id = DbContext.Caregivers.FirstOrDefault().Id; //TEMPORARY
-
-        // Set caregiver for the new appointment
-        newAppointment.Caregiver = DbContext.Caregivers.FirstOrDefault();
-
-        // Add the new appointment to the database
-        //await httpClient.PostAsJsonAsync($"api/caregivers/{newAppointment.Caregiver.Id}/appointments", newAppointment);
-        await AppointmentService.AddAppointment(newAppointment);
-
-        // Update FullCalendar
-        await JSRuntime.InvokeVoidAsync("addAppointmentSlotToCalendar", newAppointment); 
-
-        // Clear the form and reload appointments
-        newAppointment = new Appointment();
-        await LoadCaregiverAppointments();
-
-
-        StateHasChanged();
-    }
-} *@
-
-
-
-@* <h3>Caregiver Availability Management</h3>
-
-<div id='calendar'></div>
-
-@code {
-    private List<AppointmentSlot> appointmentSlots = new List<AppointmentSlot>();
-
-    protected override async Task OnInitializedAsync()
-    {
-        // Fetch and load existing appointment slots
-        await LoadAppointmentSlots();
-
-        // Initialize FullCalendar
-        await JSRuntime.InvokeVoidAsync("initializeCalendar", "caregivers");
-    }
-
-    private async Task LoadAppointmentSlots()
-    {
-        // Fetch caregiver's appointment slots from the API
-        var caregiverId = "your-caregiver-id";
-        appointmentSlots = await AppointmentSlotService.GetCaregiverAppointmentSlots(caregiverId);
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            // Populate calendar with existing appointment slots
-            await PopulateCalendar();
-        }
-    }
-
-    private async Task PopulateCalendar()
-    {
-        if (appointmentSlots != null)
-        {
-            // Iterate through appointment slots and add to FullCalendar
-            foreach (var slot in appointmentSlots)
-            {
-                await JSRuntime.InvokeVoidAsync("addAppointmentSlotToCalendar", slot);
-            }
-        }
-    } *@
-}
-
-
-
-
-@* <h3>Caregiver Availability Management</h3>
-
-<div id='calendar'></div>
-
-@code {
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await JSRuntime.InvokeVoidAsync("initializeCalendar", "caregivers");
-        }
-    }
-}
- *@
