@@ -1,8 +1,8 @@
 ﻿@page "/dashboard"
 @attribute [Authorize]
-@inject HealthCare.Core.Data.HealthCareContext DbContext
-@using HealthCare.Core.Models
-@using Microsoft.EntityFrameworkCore
+@inject HealthCareContext DbContext
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
 
 <h3>Dashboard Caregiver</h3>
 
@@ -11,31 +11,20 @@
     <NavLink class="nav-link" href="Caregiver_CalendarView">Manage Availability</NavLink>
 </div>
 
-@* CRASHES RIGHT NOW IF THIS IS RUN, BUT DO NOT REMOVE *@
-
-@* <div class="upcomingApointments">
+<div class="upcomingApointments">
     <h5>Upcoming Appointments</h5>
-    <ol>
-        @foreach (var appointment in UpcomingAppointments)
-        {
-            <li>@appointment.StartTime @appointment.Patient.Name</li>
-        }
-    </ol>
-</div> *@
+</div>
 
-@* <div class="pastAppointments">
+<div class="pastAppointments">
     <h5>Past Appointments</h5>
-    <ol>
-        @foreach (var appointment in PastAppointments)
-        {
-            <li>@appointment.StartTime @appointment.Patient.Name</li>
-        }
-    </ol>
-</div> *@
+</div>
 
 <div class="profile">
     <h5>Profile</h5>
     <label>Name: @Caregiver?.Name</label>
+    <label>Date of Birth: @Caregiver.DateOfBirth</label>
+    <label>Phone Number: @Caregiver.PhoneNumber</label>
+    <label>Email: @Caregiver.Email</label>
     <NavLink class="nav-link" href="profile"> Edit Profile </NavLink>
 </div>
 
@@ -47,25 +36,15 @@
     protected override void OnInitialized()
     {
         SeedData();
-        GetCaregiver();
+        FetchUserDetails();
         GetAppointments();
     }
 
     private void SeedData()
     {
-        // using (var scope = serviceProvider.CreateScope())
-        // {
-        //     var dbContext = scope.ServiceProvider.GetRequiredService<HealthCareContext>();
-
-        //     if (!dbContext.Caregivers.Any())
-        //     {
-
-
-        //     }
-
         if (!DbContext.Caregivers.Any())
         {
-            var caregiver1 = new Caregiver { Id = Guid.NewGuid(), Auth0Id = "123", Role="Doctor", Name = "Emma Engberg", Email = "emma.e@example.com", };
+            var caregiver1 = new Caregiver { Id = Guid.NewGuid(), Auth0Id = "123", Role = "Doctor", Name = "Emma Engberg", Email = "emma.e@example.com", };
             var caregiver2 = new Caregiver { Id = Guid.NewGuid(), Auth0Id = "456", Role = "Nurse", Name = "Marcus Nilsson", Email = "marcus.n@example.com" };
             var caregiver3 = new Caregiver { Id = Guid.NewGuid(), Auth0Id = "789", Role = "Doctor", Name = "Sandra Ask", Email = "sandra.a@example.com" };
 
@@ -75,13 +54,23 @@
 
             DbContext.SaveChanges();
         }
-
-
     }
 
-    private void GetCaregiver()
+    private async Task FetchUserDetails()
     {
-        Caregiver = DbContext.Caregivers.FirstOrDefault();
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        var userId = authState.User.Claims
+                   .Where(c => c.Type.Equals(ClaimTypes.NameIdentifier))
+                   .Select(c => c.Value)
+                   .FirstOrDefault() ?? string.Empty;
+
+        GetCaregiver(userId);
+    }
+
+    private void GetCaregiver(string authId)
+    {
+        Caregiver = DbContext.Caregivers.FirstOrDefault(p => p.Auth0Id == authId);
     }
 
     private void GetAppointments()
