@@ -9,50 +9,92 @@
 
 @code {
 
-	private string fullName;
-	private string firstName;
-	private string lastName;
-	private string nickname;
-	private string emailAddress;
-	private string profileImage;
-	private string auth0Id;
+    private string fullName;
+    private string firstName;
+    private string lastName;
+    private string nickname;
+    private string emailAddress;
+    private string profileImage;
+    private string auth0Id;
 
-	protected override async Task OnInitializedAsync()
-	{
-		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-		var user = authState.User;
+    private readonly HashSet<string> doctorAuth0Ids = new HashSet<string>
+    {
+        "auth0|659fce7eb2b6d54c87f82290",
+        "auth0|659fd055a4ffcf97947ac05b",
+        "auth0|659fd0d0b2b6d54c87f823d0",
+    };
 
-		if (user.Identity.IsAuthenticated)
-		{
+    private readonly HashSet<string> nurseAuth0Ids = new HashSet<string>
+    {
+        "auth0|659fd1182c6a20cc35b2bc25",
+        "auth0|659fd140a4ffcf97947ac0de",
+        "auth0|659fd16f86e1aaad2fb02430",
+    };
 
-			firstName = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName)?.Value ?? "Not provided";
-			lastName = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Surname)?.Value ?? "Not provided";
-			emailAddress = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? "Not provided";
-			profileImage = user.Claims.FirstOrDefault(c => c.Type == "picture")?.Value;
-			auth0Id = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
 
-			fullName = $"{firstName} {lastName}";
+        if (user.Identity.IsAuthenticated)
+        {
+            firstName = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName)?.Value ?? "Not provided";
+            lastName = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Surname)?.Value ?? "Not provided";
+            emailAddress = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? "Not provided";
+            profileImage = user.Claims.FirstOrDefault(c => c.Type == "picture")?.Value;
+            auth0Id = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
-			var patient = DbContext.Patients.FirstOrDefault(p => p.Auth0Id == auth0Id);
-			if (patient == null)
-			{
-				patient = new Patient
-					{
-						Id = Guid.NewGuid(),
-						Auth0Id = auth0Id,
-						Email = emailAddress,
-						Name = fullName,
-						Appointments = new List<Appointment>()
-					};
-				DbContext.Patients.Add(patient);
-				await DbContext.SaveChangesAsync();
-			}
+            fullName = $"{firstName} {lastName}";
 
-			NavigationManager.NavigateTo("/");
-		}
-		else
-		{
-			NavigationManager.NavigateTo("/login");
-		}
-	}
+            var caregiver = DbContext.Caregivers.FirstOrDefault(c => c.Auth0Id == auth0Id);
+
+            if (caregiver == null)
+            {
+                if (doctorAuth0Ids.Contains(auth0Id))
+                {
+                    caregiver = new Caregiver
+                        {
+                            Id = Guid.NewGuid(),
+                            Auth0Id = auth0Id,
+                            Email = emailAddress,
+                            Name = fullName,
+                            Role = "Doctor",
+                        };
+                    DbContext.Caregivers.Add(caregiver);
+                }
+                else if (nurseAuth0Ids.Contains(auth0Id))
+                {
+                    caregiver = new Caregiver
+                        {
+                            Id = Guid.NewGuid(),
+                            Auth0Id = auth0Id,
+                            Email = emailAddress,
+                            Name = fullName,
+                            Role = "Nurse",
+                        };
+                    DbContext.Caregivers.Add(caregiver);
+                }
+                else
+                {
+                    var patient = new Patient
+                        {
+                            Id = Guid.NewGuid(),
+                            Auth0Id = auth0Id,
+                            Email = emailAddress,
+                            Name = fullName,
+                            Appointments = new List<Appointment>()
+                        };
+                    DbContext.Patients.Add(patient);
+                }
+
+                await DbContext.SaveChangesAsync();
+            }
+
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+    }
 }
