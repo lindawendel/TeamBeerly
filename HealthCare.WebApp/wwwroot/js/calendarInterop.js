@@ -50,7 +50,7 @@ if (window.FullCalendar) {
                                 end: info.end,
                                 backgroundColor: 'green',
                                 borderColor: 'green',
-                                editable: true,
+                                editable: false,
                             });
                             dotnetReference.invokeMethodAsync('AddAppointmentFromCalendar', slot.startTime, slot.endTime);
                         }
@@ -106,7 +106,7 @@ if (window.FullCalendar) {
                 end: slot.endTime,
                 backgroundColor: 'green',
                 borderColor: 'green',
-                editable: true,
+                editable: false,
             });
         }
     };
@@ -125,7 +125,7 @@ if (window.FullCalendar) {
                     end: appointment.endTime,
                     backgroundColor: 'green',
                     borderColor: 'green',
-                    editable: true,
+                    editable: false,
                 });
             }
         }
