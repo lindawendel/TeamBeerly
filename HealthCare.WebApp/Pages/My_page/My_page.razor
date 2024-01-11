@@ -35,7 +35,7 @@
     <ol>     @foreach (var appointment in UpcomingAppointments)
         {
             <li>
-            <p>Date & Time: @appointment.Time</p>
+            <p>Date & Time: @appointment.StartTime</p>
             <p>Caregiver: @appointment.Caregiver.Name</p>
             <p> @appointment.Service</p>
             <p><NavLink class="nav-link" href="my_page"> Cancel appointment </NavLink></p>
@@ -51,7 +51,7 @@
         @foreach (var appointment in PastAppointments)
        {
             <li>
-            <p>Date & Time: @appointment.Time</p>
+            <p>Date & Time: @appointment.StartTime</p>
             <p>Caregiver: @appointment.Caregiver.Name</p>
             <p> @appointment.Service</p>
             </li>
@@ -95,15 +95,15 @@
         if (patient != null)
         {
             UpcomingAppointments = DbContext.Appointments
-                .Where(a => a.Time > now && a.Patient.Id == patient.Id)
+                .Where(a => a.StartTime > now && a.Patient.Id == patient.Id)
                 .Include(a => a.Caregiver)
-                .OrderBy(a => a.Time)
+                .OrderBy(a => a.StartTime)
                 .ToList();
 
             PastAppointments = DbContext.Appointments
-                .Where(a => a.Time < now && a.Patient.Id == patient.Id)
+                .Where(a => a.StartTime < now && a.Patient.Id == patient.Id)
                 .Include(a => a.Caregiver)
-                .OrderByDescending(a => a.Time)
+                .OrderByDescending(a => a.StartTime)
                 .ToList();
         }
     }
