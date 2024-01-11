@@ -65,9 +65,9 @@
 
         if (!DbContext.Caregivers.Any())
         {
-            var caregiver1 = new Caregiver { Id = Guid.NewGuid(), Name = "Emma Engberg", Email = "emma.e@example.com", };
-            var caregiver2 = new Caregiver { Id = Guid.NewGuid(), Name = "Marcus Nilsson", Email = "marcus.n@example.com" };
-            var caregiver3 = new Caregiver { Id = Guid.NewGuid(), Name = "Sandra Ask", Email = "sandra.a@example.com" };
+            var caregiver1 = new Caregiver { Id = Guid.NewGuid(), Auth0Id = "123", Name = "Emma Engberg", Email = "emma.e@example.com", };
+            var caregiver2 = new Caregiver { Id = Guid.NewGuid(), Auth0Id = "456", Name = "Marcus Nilsson", Email = "marcus.n@example.com" };
+            var caregiver3 = new Caregiver { Id = Guid.NewGuid(), Auth0Id= "789", Name = "Sandra Ask", Email = "sandra.a@example.com" };
 
             DbContext.Caregivers.Add(caregiver1);
             DbContext.Caregivers.Add(caregiver2);
