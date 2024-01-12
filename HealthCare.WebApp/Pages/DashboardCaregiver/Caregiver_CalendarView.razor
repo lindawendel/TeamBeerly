@@ -49,10 +49,6 @@
         Task.Run(async () => await AppointmentService.GetCaregiverAppointments(caregiver.Id));
         isInitialized = true;
 
-
-        // Task.Run(async () => await LoadCaregiverAppointments());
-        // isInitialized = true;
-
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -69,18 +65,13 @@
                 // Handle the case where initialization is not complete
             }
         }
+
         // Fetch and load existing caregiver appointments
         caregiverAppointments = await AppointmentService.GetCaregiverAppointments(caregiver.Id);
-        // await LoadCaregiverAppointments();
 
         // Update FullCalendar
         await JSRuntime.InvokeVoidAsync("updateCalendarAppointments", caregiverAppointments);
     }
-
-    // private async Task LoadCaregiverAppointments()
-    // {
-    //     caregiverAppointments = await AppointmentService.GetCaregiverAppointments(caregiver.Id);
-    // }
 
     private async Task AddAppointmentSlot()
     {
@@ -98,39 +89,56 @@
             newAppointment = new Appointment();
             caregiverAppointments = await AppointmentService.GetCaregiverAppointments(caregiver.Id);
 
-            // await LoadCaregiverAppointments();
-
             StateHasChanged();
         }
-        catch (Exception Ex)
+        catch (AppointmentServiceException ex)
         {
+            Console.Error.WriteLine($"AppointmentServiceException: {ex.Message}");
 
+            // Display a user-friendly error message
+            await JSRuntime.InvokeVoidAsync("alert", "An error occurred while adding the appointment. Please try again.");
+        }
+        catch (Exception ex)
+        {
+            // Handle other exceptions if needed
+            Console.Error.WriteLine($"An unexpected error occurred: {ex.Message}");
         }
     }
 
     [JSInvokable]
     public async Task AddAppointmentFromCalendar(DateTime startTime, DateTime endTime)
     {
-        var newAppointment = new Appointment
-            {
-                StartTime = startTime,
-                EndTime = endTime,
-                Caregiver = caregiver
-                // Other properties initialization as needed
-            };
+        try
+        {
+            var newAppointment = new Appointment
+                {
+                    StartTime = startTime,
+                    EndTime = endTime,
+                    Caregiver = caregiver
+                };
 
-        await AppointmentService.AddAppointment(newAppointment);
+            await AppointmentService.AddAppointment(newAppointment);
 
-        // Update FullCalendar
-        await JSRuntime.InvokeVoidAsync("addAppointmentSlotToCalendar", newAppointment);
+            // Update FullCalendar
+            await JSRuntime.InvokeVoidAsync("addAppointmentSlotToCalendar", newAppointment);
 
-        // Clear the form and reload appointments
-        newAppointment = new Appointment();
-        caregiverAppointments = await AppointmentService.GetCaregiverAppointments(caregiver.Id);
+            // Clear the form and reload appointments
+            newAppointment = new Appointment();
+            caregiverAppointments = await appointmentService.GetCaregiverAppointments(caregiver.Id);
 
-        // await LoadCaregiverAppointments();
+            StateHasChanged();
+        }
+        catch (AppointmentServiceException ex)
+        {
+            Console.Error.WriteLine($"AppointmentServiceException: {ex.Message}");
 
-        StateHasChanged();
+            // Display a user-friendly error message
+            await JSRuntime.InvokeVoidAsync("alert", "An error occurred while adding the appointment. Please try again.");
+        }
+        catch (Exception ex)
+        {
+            // Handle other exceptions if needed
+            Console.Error.WriteLine($"An unexpected error occurred: {ex.Message}");
+        }
     }
-   
 }
