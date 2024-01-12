@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.OpenApi.Models;
 using HealthCare.WebApp.Pages.Service;
+using HealthCare.WebApp;
 
 var builder = WebApplication.CreateBuilder(args);
 

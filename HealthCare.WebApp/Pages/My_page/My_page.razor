@@ -1,10 +1,6 @@
 ﻿@page "/my_page"
 @attribute [Authorize]
-@using HealthCare.Core.Models;
-@using Microsoft.EntityFrameworkCore;
-@using System.ComponentModel.DataAnnotations
-@using Microsoft.AspNetCore.Components.Forms
-@inject PatientService patientService
+@inject PatientService PatientService
 @inject AppointmentService appointmentService
 @inject HealthCare.Core.Data.HealthCareContext DbContext
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -68,25 +64,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        FetchUserDetails();
-        GetPatient();
+        patient = await PatientService.GetCurrentPatient();
+
         GetAppointments();
-    }
-
-    private async Task FetchUserDetails()
-    {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-
-        if (user.Identity.IsAuthenticated)
-        {
-            profileImage = user.Claims.FirstOrDefault(c => c.Type == "picture")?.Value;
-        }
-    }
-
-    private void GetPatient()
-    {
-        patient = DbContext.Patients.FirstOrDefault();
     }
 
    private void GetAppointments()
