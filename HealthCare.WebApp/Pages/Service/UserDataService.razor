@@ -47,10 +47,11 @@
             fullName = $"{firstName} {lastName}";
 
             var caregiver = DbContext.Caregivers.FirstOrDefault(c => c.Auth0Id == auth0Id);
+            var patient = DbContext.Patients.FirstOrDefault(p => p.Auth0Id == auth0Id);
 
-            if (caregiver == null)
+            if (doctorAuth0Ids.Contains(auth0Id) || nurseAuth0Ids.Contains(auth0Id))
             {
-                if (doctorAuth0Ids.Contains(auth0Id))
+                if (caregiver == null)
                 {
                     caregiver = new Caregiver
                         {
@@ -58,35 +59,23 @@
                             Auth0Id = auth0Id,
                             Email = emailAddress,
                             Name = fullName,
-                            Role = "Doctor",
+                            Role = doctorAuth0Ids.Contains(auth0Id) ? "Doctor" : "Nurse",
                         };
                     DbContext.Caregivers.Add(caregiver);
+                    await DbContext.SaveChangesAsync();
                 }
-                else if (nurseAuth0Ids.Contains(auth0Id))
-                {
-                    caregiver = new Caregiver
-                        {
-                            Id = Guid.NewGuid(),
-                            Auth0Id = auth0Id,
-                            Email = emailAddress,
-                            Name = fullName,
-                            Role = "Nurse",
-                        };
-                    DbContext.Caregivers.Add(caregiver);
-                }
-                else
-                {
-                    var patient = new Patient
-                        {
-                            Id = Guid.NewGuid(),
-                            Auth0Id = auth0Id,
-                            Email = emailAddress,
-                            Name = fullName,
-                            Appointments = new List<Appointment>()
-                        };
-                    DbContext.Patients.Add(patient);
-                }
-
+            }
+            else if (patient == null)
+            {
+                patient = new Patient
+                    {
+                        Id = Guid.NewGuid(),
+                        Auth0Id = auth0Id,
+                        Email = emailAddress,
+                        Name = fullName,
+                        Appointments = new List<Appointment>()
+                    };
+                DbContext.Patients.Add(patient);
                 await DbContext.SaveChangesAsync();
             }
 
