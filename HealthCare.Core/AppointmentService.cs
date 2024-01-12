@@ -1,6 +1,7 @@
 ﻿using HealthCare.Core.Data;
 using HealthCare.Core.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,11 +19,12 @@ namespace HealthCare.Core
 
         public async Task<List<Appointment>> GetCaregiverAppointments(Guid caregiverId)
         {
-            var caregiverAppointments = await database.Appointments
-                .Where(appointment => appointment.Caregiver.Id == caregiverId)
-                .ToListAsync();
+           
+                var caregiverAppointments = await database.Appointments
+                    .Where(appointment => appointment.Caregiver.Id == caregiverId)
+                    .ToListAsync();
 
-            return caregiverAppointments;
+                return caregiverAppointments;
         }
 
 
@@ -30,21 +32,24 @@ namespace HealthCare.Core
         {
             try
             {
-                // Set caregiver for the new appointment
-                newAppointment.Caregiver = database.Caregivers.FirstOrDefault();
-
                 // Add the new appointment to the database
                 database.Appointments.Add(newAppointment);
                 await database.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                // Handle exception (log, show message, etc.)
+                // Throw a custom exception to signal the UI about the error
+                throw new AppointmentServiceException("Error adding appointment to the database.", ex);
             }
         }
-
-
         
+    }
+    public class AppointmentServiceException : Exception
+    {
+        public AppointmentServiceException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+        }
     }
 
 }
