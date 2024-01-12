@@ -25,6 +25,5 @@ namespace HealthCare.Core.Models
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string Email { get; set; }
         public List<Appointment> Appointments { get; set; }
-
     }
 }

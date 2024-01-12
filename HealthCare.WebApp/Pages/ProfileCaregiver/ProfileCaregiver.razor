@@ -1,7 +1,8 @@
 ﻿@page "/profile"
 @attribute [Authorize]
-@inject HealthCare.Core.Data.HealthCareContext DbContext
-@using HealthCare.Core.Models
+@inject HealthCareContext DbContext
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
 
 <NavLink class="nav-link" href="dashboard">Back</NavLink>
 
@@ -13,18 +14,13 @@
 </div>
 
 <div>
-    <label>Last Name:</label>
-    @* <input @bind="caregiver.LastName" /> *@
-</div>
-
-<div>
     <label>Date of Birth:</label>
-    @* <input @bind="caregiver.DateOfBirth" /> *@
+    <input @bind="Caregiver.DateOfBirth" />
 </div>
 
 <div>
     <label>Phone Number:</label>
-    @* <input @bind="caregiver.PhoneNumber" /> *@
+    <input @bind="Caregiver.PhoneNumber" />
 </div>
 
 <div>
@@ -33,22 +29,57 @@
 </div>
 
 <button @onclick="SaveCaregiverProfile">Save</button>
+@if (isSaveSuccessful)
+{
+    <p style="color: green;">Changes saved successfully!</p>
+    DelayedRedirect();
+}
 
 @code {
-
+    private bool isSaveSuccessful = false;
     private Caregiver Caregiver;
 
     protected override void OnInitialized()
     {
-        GetCaregiverProfile();
+        FetchUserDetails();
     }
 
-    private void GetCaregiverProfile()
+    private async Task FetchUserDetails()
     {
-        Caregiver = DbContext.Caregivers.FirstOrDefault(); // Adjust based on your data model
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        var userId = authState.User.Claims
+                   .Where(c => c.Type.Equals(ClaimTypes.NameIdentifier))
+                   .Select(c => c.Value)
+                   .FirstOrDefault() ?? string.Empty;
+
+        GetCaregiver(userId);
     }
 
-    private void SaveCaregiverProfile()
+    private void GetCaregiver(string authId)
     {
+        Caregiver = DbContext.Caregivers.FirstOrDefault(p => p.Auth0Id == authId);
+    }
+
+    private async Task SaveCaregiverProfile()
+    {
+        var existingCaregiver = await DbContext.Caregivers.FirstOrDefaultAsync(p => p.Auth0Id == Caregiver.Auth0Id);
+
+        if (existingCaregiver != null)
+        {
+            existingCaregiver.Name = Caregiver.Name;
+            existingCaregiver.DateOfBirth = Caregiver.DateOfBirth;
+            existingCaregiver.PhoneNumber = Caregiver.PhoneNumber;
+            existingCaregiver.Email = Caregiver.Email;
+        }
+
+        await DbContext.SaveChangesAsync();
+        isSaveSuccessful = true;
+    }
+
+    private async Task DelayedRedirect()
+    {
+        await Task.Delay(1000);
+        NavigationManager.NavigateTo("/dashboard");
     }
 }
