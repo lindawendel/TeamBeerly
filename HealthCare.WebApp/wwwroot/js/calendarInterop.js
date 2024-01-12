@@ -2,11 +2,10 @@
 if (window.FullCalendar) {
     var calendar;
 
-    window.initializeCalendar = (viewType) => {
+    window.initializeCalendar = (viewType, dotnetReference) => {
         console.log("Initializing Calendar");
 
         var calendarEl = document.getElementById('calendar');
-        /*var calendar;*/
 
         // Define calendarOptions with default values
         var calendarOptions = {
@@ -17,6 +16,7 @@ if (window.FullCalendar) {
                 minute: '2-digit',
                 hour12: false
             },
+            timeZone: 'Europe/Stockholm', 
             /*slotLabelInterval: '00:45:00',*/
             businessHours: {
                 daysOfWeek: [1, 2, 3, 4, 5],
@@ -25,31 +25,38 @@ if (window.FullCalendar) {
             },
             selectable: true,
             select: function (info) {
-                if (calendar && viewType === 'patients') {
-
-                    var title = prompt('Event Title:');
-                    if (title) {
-                        calendar.addEvent({
-                            title: title,
-                            start: info.start,
-                            end: info.end
-                        });
-                    }
-                } else if (calendar && viewType === 'caregivers') {
-
-                    var confirmAdd = confirm('Do you want to add this time slot?');
-                    if (confirmAdd) {
-                        calendar.addEvent({
-                            title: 'Available',
-                            start: info.start,
-                            end: info.end,
-                            backgroundColor: 'green',
-                            borderColor: 'green',
-                            editable: true,
-                        });
-                    }
-                }
                 if (calendar) {
+                    var slot = {
+                        startTime: info.start,
+                        endTime: info.end
+                    };
+
+                    if (viewType === 'patients') {
+
+                        //var title = prompt('Event Title:');
+                        //if (title) {
+                        //    calendar.addEvent({
+                        //        title: title,
+                        //        start: info.start,
+                        //        end: info.end
+                        //    });
+                        //}
+                    } else if (viewType === 'caregivers') {
+
+                        var confirmAdd = confirm('Do you want to add this time slot?');
+                        if (confirmAdd) {
+                            calendar.addEvent({
+                                title: 'Available',
+                                start: info.start,
+                                end: info.end,
+                                backgroundColor: 'green',
+                                borderColor: 'green',
+                                editable: false,
+                            });
+                            dotnetReference.invokeMethodAsync('AddAppointmentFromCalendar', slot.startTime, slot.endTime);
+                        }
+                    }
+
                     calendar.unselect();
                 }
             },
@@ -77,7 +84,7 @@ if (window.FullCalendar) {
                     (end.getMinutes() % 45 != 15)
                 );
             };
-            Object.assign(calendarOptions, { businessHours: businessHours, slotMinTime: '09:00', slotMaxTime: '15:00', selectAllow: selectAllow });
+            Object.assign(calendarOptions, { businessHours: businessHours, slotMinTime: '09:00', slotMaxTime: '15:00', selectAllow: selectAllow, timeZone: 'Europe/Stockholm'});
         }
 
         if (calendarEl) {
@@ -100,7 +107,7 @@ if (window.FullCalendar) {
                 end: slot.endTime,
                 backgroundColor: 'green',
                 borderColor: 'green',
-                editable: true,
+                editable: false,
             });
         }
     };
@@ -119,12 +126,12 @@ if (window.FullCalendar) {
                     end: appointment.endTime,
                     backgroundColor: 'green',
                     borderColor: 'green',
-                    editable: true,
+                    editable: false,
                 });
             }
         }
     };
 
-}   else {
+} else {
     console.error("FullCalendar not found. Make sure it's properly loaded.");
 }

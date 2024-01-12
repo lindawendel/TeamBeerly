@@ -26,36 +26,27 @@ namespace HealthCare.Core
         }
 
 
-        //AS OF RIGHT NOW
         public async Task AddAppointment(Appointment newAppointment)
         {
-            // Set caregiver ID for the new appointment
-            newAppointment.Caregiver.Id = database.Caregivers.FirstOrDefault().Id;
+            try
+            {
+                // Set caregiver for the new appointment
+                newAppointment.Caregiver = database.Caregivers.FirstOrDefault();
 
-            // Add the new appointment to the database
-            database.Appointments.Add(newAppointment);
-            await database.SaveChangesAsync();
+                // Add the new appointment to the database
+                database.Appointments.Add(newAppointment);
+                await database.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                // Handle exception (log, show message, etc.)
+            }
         }
 
+
+        
     }
 
-    //private readonly HealthCareContext _dbContext;
-
-    //public AppointmentService(HealthCareContext dbContext)
-    //{
-    //         _dbContext = dbContext;
-    //}
-
-    //     public Appointment GetAppointment(Guid appointmentId)
-    //     {
-    //     return _dbContext.Appointments.FirstOrDefault(a => a.Id == appointmentId);
-    //     }
-
-    // public List<Appointment> GetAppointmentsByPatientId(Guid patientId) 
-    // {
-    //     return _dbContext.Appointments.Include(a => a.Caregiver).Where(a => a.Patient.Id == patientId).ToList();
-
-    // }
 }
 
 
