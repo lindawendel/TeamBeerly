@@ -5,8 +5,10 @@
 @inject IJSRuntime JSRuntime
 @inject IAppointmentService AppointmentService
 @inject HealthCare.Core.Data.HealthCareContext DbContext
+@inject AppointmentService appointmentService
 @inject HttpClient httpClient
 @layout MainLayout
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 
 <h3>Caregiver Availability Management</h3>
@@ -27,12 +29,29 @@
     private List<Appointment> caregiverAppointments = new List<Appointment>();
     private Appointment newAppointment = new Appointment();
     private bool isInitialized = false;
+    private Caregiver caregiver;
 
     protected override void OnInitialized()
-    {
+    { 
+        var authStateTask = Task.Run(() => AuthenticationStateProvider.GetAuthenticationStateAsync());
+        authStateTask.Wait(); // This will block the current thread until the task is complete
+        var authState = authStateTask.Result;
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            var auth0Id = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            caregiver = DbContext.Caregivers.FirstOrDefault(p => p.Auth0Id == auth0Id);
+        }
+
         // Fetch and load existing caregiver appointments
-        Task.Run(async () => await LoadCaregiverAppointments());
+        Task.Run(async () => await AppointmentService.GetCaregiverAppointments(caregiver.Id));
         isInitialized = true;
+
+
+        // Task.Run(async () => await LoadCaregiverAppointments());
+        // isInitialized = true;
 
     }
 
@@ -51,40 +70,23 @@
             }
         }
         // Fetch and load existing caregiver appointments
-        await LoadCaregiverAppointments();
+        caregiverAppointments = await AppointmentService.GetCaregiverAppointments(caregiver.Id);
+        // await LoadCaregiverAppointments();
 
         // Update FullCalendar
         await JSRuntime.InvokeVoidAsync("updateCalendarAppointments", caregiverAppointments);
     }
 
-    private async Task LoadCaregiverAppointments()
-    {
-        try
-        {
-            Guid caregiverId = DbContext.Caregivers.FirstOrDefault()?.Id ?? Guid.Empty;
-
-            if (caregiverId != Guid.Empty)
-            {
-                caregiverAppointments = await AppointmentService.GetCaregiverAppointments(caregiverId);
-            }
-            else
-            {
-                // Handle the case where caregiverId is not available
-            }
-        }
-        catch (Exception ex)
-        {
-
-
-        }
-    }
+    // private async Task LoadCaregiverAppointments()
+    // {
+    //     caregiverAppointments = await AppointmentService.GetCaregiverAppointments(caregiver.Id);
+    // }
 
     private async Task AddAppointmentSlot()
     {
-
         try
         {
-            newAppointment.Caregiver = DbContext.Caregivers.FirstOrDefault();
+            newAppointment.Caregiver = caregiver;
 
             // Add the new appointment to the database
             await AppointmentService.AddAppointment(newAppointment);
@@ -94,7 +96,9 @@
 
             // Clear the form and reload appointments
             newAppointment = new Appointment();
-            await LoadCaregiverAppointments();
+            caregiverAppointments = await AppointmentService.GetCaregiverAppointments(caregiver.Id);
+
+            // await LoadCaregiverAppointments();
 
             StateHasChanged();
         }
@@ -111,6 +115,7 @@
             {
                 StartTime = startTime,
                 EndTime = endTime,
+                Caregiver = caregiver
                 // Other properties initialization as needed
             };
 
@@ -121,10 +126,11 @@
 
         // Clear the form and reload appointments
         newAppointment = new Appointment();
-        await LoadCaregiverAppointments();
+        caregiverAppointments = await AppointmentService.GetCaregiverAppointments(caregiver.Id);
+
+        // await LoadCaregiverAppointments();
 
         StateHasChanged();
-
     }
    
 }

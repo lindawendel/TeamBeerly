@@ -30,9 +30,6 @@ namespace HealthCare.Core
         {
             try
             {
-                // Set caregiver for the new appointment
-                newAppointment.Caregiver = database.Caregivers.FirstOrDefault();
-
                 // Add the new appointment to the database
                 database.Appointments.Add(newAppointment);
                 await database.SaveChangesAsync();
@@ -42,8 +39,6 @@ namespace HealthCare.Core
                 // Handle exception (log, show message, etc.)
             }
         }
-
-
         
     }
 
