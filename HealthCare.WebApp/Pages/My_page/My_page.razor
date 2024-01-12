@@ -65,6 +65,7 @@
     protected override async Task OnInitializedAsync()
     {
         patient = await PatientService.GetCurrentPatient();
+        profileImage = await PatientService.GetProfilePicture();
 
         GetAppointments();
     }

@@ -33,11 +33,17 @@ namespace HealthCare.WebApp
 
         public async Task<string> GetAuthId()
         {
-            var state = await _authenticationStateProvider.GetAuthenticationStateAsync();
-            return state.User.Claims
+            var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+            return authState.User.Claims
                 .Where(c => c.Type.Equals(ClaimTypes.NameIdentifier))
                 .Select(c => c.Value)
                 .FirstOrDefault() ?? string.Empty;
+        }
+
+        public async Task<string?> GetProfilePicture()
+        {
+            var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+            return authState.User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value ?? string.Empty;
         }
 
         public async Task<Patient> GetCurrentPatient()
