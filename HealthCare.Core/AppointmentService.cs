@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace HealthCare.Core
 {
@@ -25,12 +26,14 @@ namespace HealthCare.Core
             return caregiverAppointments;
         }
 
-
+        //rebuilding this for testing (Frex)
         //AS OF RIGHT NOW
         public async Task AddAppointment(Appointment newAppointment)
         {
             // Set caregiver ID for the new appointment
-            newAppointment.Caregiver.Id = database.Caregivers.FirstOrDefault().Id;
+            //newAppointment.Caregiver.Id = database.Caregivers.FirstOrDefault().Id;
+
+
 
             // Add the new appointment to the database
             database.Appointments.Add(newAppointment);

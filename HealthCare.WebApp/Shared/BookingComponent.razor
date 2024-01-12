@@ -2,6 +2,8 @@
 @attribute [Authorize]
 @using HealthCare.Core.Models;
 @inject BookingService BookingService
+@inject CaregiverService CaregiverService
+@inject AppointmentService AppointmentService
 @inject HealthCareContext DbContext
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @using HealthCare.Core.Data
@@ -23,17 +25,31 @@
 
 </select>
 <button @onclick="BookAppointment">Book</button>
+<button @onclick="BookAppointment">BookAppointment</button>
+
+
+<select id="selectCaregiver">
+    @foreach (var gubbe in careGivers)
+    {
+        <option value="@gubbe.Id">@gubbe.Id</option>
+    }
+</select>
+
 
 @if (isSaveSuccessful)
 {
     <p style="color: green;">Booking confirmed!</p>
 }
 
+
+
 @code {
     private DateTime selectedTime = DateTime.Now;
     private Patient patient;
     private string selectedService = "General Checkup";
     private bool isSaveSuccessful = false;
+    private List<Caregiver> careGivers = new List<Caregiver>();
+    private Guid selectedCaregiverId;
 
 
 
@@ -43,10 +59,38 @@
         var user = authState.User;
 
         if (user.Identity.IsAuthenticated)
+
         {
+            careGivers = CaregiverService.GetCaregivers().ToList();
+
             var auth0Id = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
             patient = DbContext.Patients.FirstOrDefault(p => p.Auth0Id == auth0Id);
+        }
+
+    }
+
+    private async Task MakeAppointment()
+    {
+        var selectedCaregiver = careGivers.FirstOrDefault(g => g.Id == selectedCaregiverId);
+
+        if (patient != null && !string.IsNullOrEmpty(selectedService))
+        {
+            var newAppointment = new Appointment
+                {
+                    Patient = patient,
+                    Caregiver = selectedCaregiver,
+                    StartTime = DateTime.Now.AddHours(6),
+                    EndTime = DateTime.Now.AddHours(8),
+                    Service = selectedService,
+                    Description = "whatever",
+                    IsBooked = true
+                };
+
+            await AppointmentService.AddAppointment(newAppointment);
+
+            isSaveSuccessful = true;
+
         }
     }
 
