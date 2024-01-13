@@ -23,7 +23,6 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<HealthCareContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
-//InMemoryDbInitializer.Initialize(builder.Services.BuildServiceProvider());
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -123,8 +122,20 @@ app.UseSwaggerUI(c =>
     c.RoutePrefix = "swagger";
 });
 
+
+
 app.UseAuthentication();
 app.UseAuthorization();
+
+try
+{
+    InMemoryDbInitializer.Initialize(app.Services);
+}
+catch (Exception ex)
+{
+    // Log or print the exception details
+    Console.WriteLine($"Exception during database initialization: {ex.Message}");
+}
 
 app.MapControllers();
 app.MapBlazorHub();

@@ -44,8 +44,8 @@ else
         // else
         // {
             
-        //     appointmentDetails = null;
-        // }
+            appointmentDetails = null;
+        }
     } 
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -54,5 +54,5 @@ else
         {
             await JSRuntime.InvokeVoidAsync("initializeCalendar", "patients");
         }
-    }
+    } *@
 }

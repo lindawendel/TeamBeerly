@@ -1,10 +1,37 @@
-//using HealthCare.Core.Data;
-//using HealthCare;
-//using System;
-//using Microsoft.Extensions.DependencyInjection;
-//using HealthCare.Core.Models;
-//using HealthCare.Core.Data;
+using HealthCare.Core.Data;
+using HealthCare;
+using System;
+using Microsoft.Extensions.DependencyInjection;
+using HealthCare.Core.Models;
+using HealthCare.Core.Data;
+using System.Data;
 
+
+public static class InMemoryDbInitializer
+{
+    public static void Initialize(IServiceProvider serviceProvider)
+    {
+        using (var scope = serviceProvider.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<HealthCareContext>();
+
+            dbContext.Database.EnsureCreated();
+
+            if (!dbContext.Caregivers.Any())
+            {
+                var Caregiver1 = new Caregiver { Id = Guid.NewGuid(), Auth0Id = "659fce7eb2b6d54c87f82290", Name = "Doctor Cosmos", Role = "Doctor", DateOfBirth = new DateTime(1975, 12, 12), PhoneNumber = "031148877", Email = "just@splanned.com" };
+
+                dbContext.Caregivers.Add(Caregiver1);
+
+                dbContext.SaveChanges();
+
+            }
+
+
+
+        }
+    }
+}
 //public static class InMemoryDbInitializer
 //{
 //    public static void Initialize(IServiceProvider serviceProvider)
