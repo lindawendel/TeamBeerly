@@ -1,31 +1,32 @@
 ﻿@page "/"
-@using System.Security.Claims
+@using System.Security.Claims,
 @using HealthCare.Core.Data
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 <h1>Sluta lipa och kolla in en goding på beerly.com istället. Löser allt</h1>
 
-<h2>
+@* <h2>
     du är inloggad som @UserName
 
-</h2>
+</h2> *@
 
+<NavLink href="grid">Grid</NavLink>
 
 @code {
 
-    @code {
-    private string UserName { get; set; }
 
-        protected override void OnInitialized()
-        {
-            var userNameClaim = HealthCareContext.User.FindFirst("name");
+    // private string UserName { get; set; }
 
-            if (userNameClaim != null)
-            {
-                UserName = userNameClaim.Value;
-            }
-        }
-    }
+    //     protected override void OnInitialized()
+    //     {
+    //         var userNameClaim = HealthCareContext.User.FindFirst("name");
+
+    //         if (userNameClaim != null)
+    //         {
+    //             UserName = userNameClaim.Value;
+    //         }
+    //     }
+    
 
 
 

@@ -1,18 +1,12 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using HealthCare.Core;
 using Microsoft.EntityFrameworkCore;
 using HealthCare.Core.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.OpenApi.Models;
 using HealthCare.WebApp.Pages.Service;
+using HealthCare.WebApp.Pages.SingeltonTest;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -94,6 +88,10 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthcareAPI", Version = "v1" });
 });
+
+
+
+builder.Services.AddSingleton<GridService>();
 
 // Building the web application
 

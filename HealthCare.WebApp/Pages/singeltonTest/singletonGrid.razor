@@ -1,0 +1,68 @@
+﻿@page "/grid"
+
+@inject GridService GridService
+
+<h3>Grid</h3>
+
+<table border="1">
+    @foreach (var row in GridService.GetGrid())
+    {
+        <tr>
+            @foreach (var cell in row)
+            {
+                <td>
+                    <button @onclick="() => CellClicked(cell)">@cell</button>
+                </td>
+            }
+        </tr>
+    }
+</table>
+
+<h4>Click Events:</h4>
+<ul>
+    @foreach (var clickEvent in clickEvents)
+    {
+        <li>@clickEvent.Time - ClickId @clickEvent.Id - Cell Clicked @clickEvent.Cell</li>
+    }
+</ul>
+
+
+@code {
+
+    public class ClickEvent
+    {
+        public DateTime Time { get; set; }
+        public int Id { get; set; }
+        public string Cell { get; set; }
+    }
+
+
+    // private void CellClicked(string cellValue)
+    // {
+    //     // Do something when a cell is clicked, e.g., navigate to a new page or show a modal
+    //     Console.WriteLine($"Cell clicked: {cellValue}");
+    // }
+
+    private List<ClickEvent> clickEvents = new List<ClickEvent>();
+
+    private void CellClicked(string cellValue)
+    {
+        var newClickEvent = new ClickEvent
+            {
+                Time = DateTime.Now,
+                Id = GetNextEventId(),
+                Cell = cellValue.ToString()
+            };
+
+        clickEvents.Add(newClickEvent);
+
+        // Handle the click event, for example, navigate to a different page
+       // NavigationManager.NavigateTo($"/cellDetails/{cellValue}");
+    }
+
+    private int GetNextEventId()
+    {
+        // Logic to generate a unique ID for each click event
+        return clickEvents.Count + 1;
+    }
+}
