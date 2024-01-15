@@ -1,9 +1,9 @@
 ﻿@page "/grid"
-
+@using Microsoft.AspNetCore.SignalR.Client
+@inject IJSRuntime JSRuntime
 @inject GridService GridService
 
 <h3>Grid</h3>
-
 <table border="1">
     @foreach (var row in GridService.GetGrid())
     {
@@ -11,7 +11,7 @@
             @foreach (var cell in row)
             {
                 <td>
-                    <button @onclick="() => CellClicked(cell)">@cell</button>
+                    <button @onclick="() => CellClicked(cell)" disabled="@(!cell.IsClickable)">@cell.Value</button>
                 </td>
             }
         </tr>
@@ -20,49 +20,65 @@
 
 <h4>Click Events:</h4>
 <ul>
-    @foreach (var clickEvent in clickEvents)
+    @foreach (var clickEvent in GridService.ClickEvents)
     {
         <li>@clickEvent.Time - ClickId @clickEvent.Id - Cell Clicked @clickEvent.Cell</li>
     }
 </ul>
 
+<button @onclick="ResetGrid">Reset Grid</button>
 
 @code {
+    private HubConnection hubConnection;
+    private GridHub gridHub;
 
-    public class ClickEvent
+    private async Task StartConnection()
     {
-        public DateTime Time { get; set; }
-        public int Id { get; set; }
-        public string Cell { get; set; }
-    }
+        if (hubConnection == null)
+        {
+            var hubConnectionBuilder = new HubConnectionBuilder();
+            hubConnection = hubConnectionBuilder
+                .WithUrl("https://localhost:7139/gridHub")
+                .Build();
 
-
-    // private void CellClicked(string cellValue)
-    // {
-    //     // Do something when a cell is clicked, e.g., navigate to a new page or show a modal
-    //     Console.WriteLine($"Cell clicked: {cellValue}");
-    // }
-
-    private List<ClickEvent> clickEvents = new List<ClickEvent>();
-
-    private void CellClicked(string cellValue)
-    {
-        var newClickEvent = new ClickEvent
+            hubConnection.On("ReceiveGridUpdate", () =>
             {
-                Time = DateTime.Now,
-                Id = GetNextEventId(),
-                Cell = cellValue.ToString()
-            };
+                // Handle the grid update event
+                // This might involve refreshing the grid or performing other UI updates
+                GridService.UpdateGrid();
+                StateHasChanged(); // Ensure UI updates are reflected
+            });
 
-        clickEvents.Add(newClickEvent);
-
-        // Handle the click event, for example, navigate to a different page
-       // NavigationManager.NavigateTo($"/cellDetails/{cellValue}");
+            gridHub = new GridHub(JSRuntime, hubConnection);
+            await gridHub.ConnectAsync();
+            await gridHub.SendAsync("RequestGridUpdate");
+        }
     }
 
-    private int GetNextEventId()
+    private void CellClicked(GridService.GridCell cell)
     {
-        // Logic to generate a unique ID for each click event
-        return clickEvents.Count + 1;
+        if (cell.IsClickable)
+        {
+            cell.IsClickable = false;
+            GridService.UpdateGrid(); // Update the grid with the new clickable cells
+            hubConnection.SendAsync("BroadcastGridUpdate");
+        }
+    }
+
+    private void ResetGrid()
+    {
+        foreach (var clickEvent in GridService.ClickEvents)
+        {
+            clickEvent.IsClickable = true;
+        }
+
+        GridService.ResetGrid(); // Reset the grid and update clickable cells
+
+        hubConnection.SendAsync("BroadcastGridUpdate");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await StartConnection();
     }
 }

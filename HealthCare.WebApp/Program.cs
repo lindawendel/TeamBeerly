@@ -1,45 +1,25 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Microsoft.EntityFrameworkCore;
 using HealthCare.Core;
-using Microsoft.EntityFrameworkCore;
 using HealthCare.Core.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.OpenApi.Models;
 using HealthCare.WebApp.Pages.Service;
 using HealthCare.WebApp.Pages.SingeltonTest;
+using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor();
-builder.Services.AddHttpContextAccessor();
+// Configuration
+builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
-builder.Services.AddDbContext<HealthCareContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Database
+builder.Services.AddDbContext<HealthCareContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
-
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-
-// Scoped services
-
-builder.Services.AddScoped<FeedbackService>();
-builder.Services.AddScoped<AppointmentService>();
-builder.Services.AddScoped<BookingService>();
-builder.Services.AddScoped<RatingService>();
-builder.Services.AddScoped<PatientService>();
-builder.Services.AddScoped<CaregiverService>();
-builder.Services.AddScoped<IAppointmentService, AppointmentService>();
-builder.Services.AddScoped<UserDataService>();
-
-
-builder.Services.AddScoped<HttpClient>(s =>
-{
-    var httpClient = new HttpClient { BaseAddress = new Uri(builder.Configuration["ApiSettings:ApiBaseUrl"]) };
-    return httpClient;
-});
-
-
+// Authentication
 var auth0Settings = builder.Configuration.GetSection("Auth0");
 
 builder.Services.AddAuthentication(options =>
@@ -64,36 +44,51 @@ builder.Services.AddAuthentication(options =>
     options.ClaimsIssuer = "Auth0";
 });
 
-builder.Services.AddScoped<IAuthenticationService>(provider =>
-    new AuthenticationService(
-        provider.GetRequiredService<NavigationManager>(),
-        provider.GetRequiredService<IHttpContextAccessor>(),
-        provider.GetRequiredService<IConfiguration>(),
-        provider.GetRequiredService<UserDataService>()));
+// Blazor and SignalR
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<GridService>();
+builder.Services.AddSingleton<HubConnectionBuilder>();
 
 
-// Temporary - not secure!
+// HttpClient
+builder.Services.AddScoped<HttpClient>(s =>
+{
+    var httpClient = new HttpClient { BaseAddress = new Uri(builder.Configuration["ApiSettings:ApiBaseUrl"]) };
+    return httpClient;
+});
+
+// Cors (Temporary - not secure!)
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-        builder =>
-        {
-            builder.AllowAnyOrigin();
-            builder.AllowAnyMethod();
-            builder.AllowAnyHeader();
-        });
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin();
+        builder.AllowAnyMethod();
+        builder.AllowAnyHeader();
+    });
 });
 
-builder.Services.AddSwaggerGen(c =>
+// Swagger
+/*builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthcareAPI", Version = "v1" });
-});
+});*/
 
+// Scoped services
+builder.Services.AddScoped<FeedbackService>();
+builder.Services.AddScoped<AppointmentService>();
+builder.Services.AddScoped<BookingService>();
+builder.Services.AddScoped<RatingService>();
+builder.Services.AddScoped<PatientService>();
+builder.Services.AddScoped<CaregiverService>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+builder.Services.AddScoped<UserDataService>();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
-
-builder.Services.AddSingleton<GridService>();
-
-// Building the web application
+// Razor Pages and Server-Side Blazor
+builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
@@ -106,37 +101,38 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+// Middleware
+app.UseCors("AllowAll"); // NOT SECURE
+
+
+
 app.UseRouting();
-
-app.UseCors("AllowAll"); //NOT SECURE
-
-// Enable middleware to serve generated Swagger as a JSON endpoint
-app.UseSwagger();
-
-// Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.)
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "HealthcareAPI V1");
-    c.RoutePrefix = "swagger";
-});
-
-
-
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Endpoints
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHub<GridHub>("/gridHub");
+    endpoints.MapBlazorHub();
+    endpoints.MapFallbackToPage("/_Host");
+});
+
+// Database Initialization
 try
 {
     InMemoryDbInitializer.Initialize(app.Services);
 }
 catch (Exception ex)
 {
-    // Log or print the exception details
     Console.WriteLine($"Exception during database initialization: {ex.Message}");
 }
 
-app.MapControllers();
-app.MapBlazorHub();
-app.MapFallbackToPage("/_Host");
+/*app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "HealthcareAPI V1");
+    c.RoutePrefix = "swagger";
+});*/
 
 app.Run();
