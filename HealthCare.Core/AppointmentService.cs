@@ -42,6 +42,27 @@ namespace HealthCare.Core
                 throw new AppointmentServiceException("Error adding appointment to the database.", ex);
             }
         }
+
+        public Appointment GetSpecificAppointment(Guid caregiverId, DateTime startTime)
+        {
+
+            var appointment = database.Appointments.Where(a => a.Caregiver.Id == caregiverId && a.StartTime == startTime).FirstOrDefault(); 
+
+            if (appointment == null) 
+            {
+                return null; 
+            }
+            else
+            {
+                return appointment;
+            }
+        }
+
+        public void DeleteAppointment(Appointment appointment)
+        {
+            database.Appointments.Remove(appointment);
+            database.SaveChanges();
+        }
         
     }
     public class AppointmentServiceException : Exception

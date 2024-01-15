@@ -60,6 +60,16 @@ if (window.FullCalendar) {
                     calendar.unselect();
                 }
             },
+            eventClick: function (info) {
+                var event = info.event;
+                var userConfirmed = window.confirm('Do you want to cancel this appointment?');
+
+                if (userConfirmed) {
+                    event.remove();
+                    dotnetReference.invokeMethodAsync('CancelAppointmentFromCalendar', event.start, event.end);
+                    alert('Canceled!');
+                }
+            },
             // ... other common options
         };
 

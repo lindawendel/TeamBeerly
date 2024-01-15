@@ -141,4 +141,13 @@
             Console.Error.WriteLine($"An unexpected error occurred: {ex.Message}");
         }
     }
+
+    [JSInvokable]
+    public async Task CancelAppointmentFromCalendar(DateTime startTime, DateTime endTime)
+    {
+        var appointment = appointmentService.GetSpecificAppointment(caregiver.Id, startTime);
+
+        appointmentService.DeleteAppointment(appointment); 
+
+    }
 }
