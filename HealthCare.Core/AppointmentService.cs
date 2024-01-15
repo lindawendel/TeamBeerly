@@ -42,7 +42,22 @@ namespace HealthCare.Core
                 throw new AppointmentServiceException("Error adding appointment to the database.", ex);
             }
         }
-        
+
+        public async Task<Appointment> GetSpecificAppointment(Guid caregiverId, DateTime startTime)
+        {
+
+            var appointment = database.Appointments.Where(a => a.Caregiver.Id == caregiverId && a.StartTime == startTime).FirstOrDefault();  
+
+            return appointment;
+        }
+
+        public async Task DeleteAppointment(Appointment appointment)
+        {
+            database.Appointments.Remove(appointment);
+            await database.SaveChangesAsync();
+        }
+
+
     }
     public class AppointmentServiceException : Exception
     {
