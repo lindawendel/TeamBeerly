@@ -1,7 +1,10 @@
 ﻿@page "/grid"
 @using Microsoft.AspNetCore.SignalR.Client
+@using HealthCare.Core.Models
 @inject IJSRuntime JSRuntime
 @inject GridService GridService
+@inject AppointmentService AppointmentService
+@inject HttpClient Http
 
 <h3>Grid</h3>
 <table border="1">
@@ -28,9 +31,38 @@
 
 <button @onclick="ResetGrid">Reset Grid</button>
 
+
+@*------------------------------------------------------------------------------------------------------------*@
+
+
+<div id='calendar'></div>
+
+<script src="/js/calendarInterop.js"></script>
+
+
+<!-- Your Blazor component content -->
+<!-- Include FullCalendar library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+
+<!-- Include your custom JavaScript file -->
+<script src="js/fullcalendar.js"></script>
+
+<!-- Call the initializeCalendar function when needed -->
+<button @onclick="@(async () => await InitializeFullCalendar("caregivers"))">Initialize Calendar</button>
+
+@* @code {
+    private async Task InitializeFullCalendar(string viewType)
+    {
+        await JSRuntime.InvokeVoidAsync("initializeCalendar", viewType);
+    }
+} *@
+
+
+
 @code {
     private HubConnection hubConnection;
     private GridHub gridHub;
+    private List<Appointment> availableAppointments;
 
     private async Task StartConnection()
     {
@@ -41,15 +73,19 @@
                 .WithUrl("https://localhost:7139/gridHub")
                 .Build();
 
-            hubConnection.On("ReceiveGridUpdate", () =>
+            hubConnection.On("ReceiveGridUpdate", async () =>
             {
-                // Handle the grid update event
-                // This might involve refreshing the grid or performing other UI updates
+                // Fetch updated appointments from the service
+                availableAppointments = await AppointmentService.GetAvailableAppointments();
+
+                // Notify FullCalendar to refresh events
+                await JSRuntime.InvokeVoidAsync("initializeFullCalendar", availableAppointments);
+
                 GridService.UpdateGrid();
-                StateHasChanged(); // Ensure UI updates are reflected
+                StateHasChanged();
             });
 
-            gridHub = new GridHub(JSRuntime, hubConnection);
+            gridHub = new GridHub(JSRuntime, hubConnection, AppointmentService);
             await gridHub.ConnectAsync();
             await gridHub.SendAsync("RequestGridUpdate");
         }
@@ -81,4 +117,20 @@
     {
         await StartConnection();
     }
+
+
+    //-----------------------------------------------------------------------------------------------------
+
+
+
+    //private List<Appointment> availableAppointments;
+
+    private async Task InitializeFullCalendar(string viewType)
+    {
+        availableAppointments = await Http.GetFromJsonAsync<List<Appointment>>("/api/appointment/availableAppointments");
+        await JSRuntime.InvokeVoidAsync("initializeFullCalendar", availableAppointments);
+    }
+
+
 }
+

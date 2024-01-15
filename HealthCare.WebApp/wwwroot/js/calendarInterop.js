@@ -1,12 +1,12 @@
-﻿
-if (window.FullCalendar) {
+﻿if (window.FullCalendar) {
+    // fullcalendar.js
+
     var calendar;
 
     window.initializeCalendar = (viewType) => {
         console.log("Initializing Calendar");
 
         var calendarEl = document.getElementById('calendar');
-        /*var calendar;*/
 
         // Define calendarOptions with default values
         var calendarOptions = {
@@ -17,7 +17,6 @@ if (window.FullCalendar) {
                 minute: '2-digit',
                 hour12: false
             },
-            /*slotLabelInterval: '00:45:00',*/
             businessHours: {
                 daysOfWeek: [1, 2, 3, 4, 5],
                 startTime: '09:00',
@@ -26,7 +25,6 @@ if (window.FullCalendar) {
             selectable: true,
             select: function (info) {
                 if (calendar && viewType === 'patients') {
-
                     var title = prompt('Event Title:');
                     if (title) {
                         calendar.addEvent({
@@ -36,7 +34,6 @@ if (window.FullCalendar) {
                         });
                     }
                 } else if (calendar && viewType === 'caregivers') {
-
                     var confirmAdd = confirm('Do you want to add this time slot?');
                     if (confirmAdd) {
                         calendar.addEvent({
@@ -58,7 +55,6 @@ if (window.FullCalendar) {
 
         // Customize calendarOptions for 'caregivers' view
         if (viewType === 'caregivers') {
-
             var businessHours = {
                 daysOfWeek: [1, 2, 3, 4, 5],
                 startTime: '09:00',
@@ -84,6 +80,16 @@ if (window.FullCalendar) {
             // Create and render FullCalendar instance
             calendar = new FullCalendar.Calendar(calendarEl, calendarOptions);
             calendar.render();
+
+            // Fetch time spans from the server
+            fetch('/api/timespan/timespans')
+                .then(response => response.json())
+                .then(data => {
+                    // Update the calendar with the fetched time spans
+                    window.updateCalendarAppointments(data);
+                })
+                .catch(error => console.error('Error fetching time spans:', error));
+
             console.log("Calendar rendered");
         } else {
             console.error("Calendar element not found");
@@ -125,6 +131,6 @@ if (window.FullCalendar) {
         }
     };
 
-}   else {
+} else {
     console.error("FullCalendar not found. Make sure it's properly loaded.");
 }

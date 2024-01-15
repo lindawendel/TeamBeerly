@@ -26,6 +26,13 @@ namespace HealthCare.Core
             return caregiverAppointments;
         }
 
+        public async Task<List<Appointment>> GetAvailableAppointments()
+        {
+            var availableAppointments = await database.Appointments.Where(appointment => appointment.IsBooked == false).ToListAsync();
+            
+            return availableAppointments;
+        }
+
         //rebuilding this for testing (Frex)
         //AS OF RIGHT NOW
         public async Task AddAppointment(Appointment newAppointment)
