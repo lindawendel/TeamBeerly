@@ -145,9 +145,20 @@
     [JSInvokable]
     public async Task CancelAppointmentFromCalendar(DateTime startTime, DateTime endTime)
     {
-        var appointment = appointmentService.GetSpecificAppointment(caregiver.Id, startTime);
+        var appointment = await appointmentService.GetSpecificAppointment(caregiver.Id, startTime);
 
-        appointmentService.DeleteAppointment(appointment); 
+        if (appointment.IsBooked == false)
+        {
+
+            appointmentService.DeleteAppointment(appointment); 
+
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "This appointment is booked and right now you can't cancel it");
+        }
+
+
 
     }
 }

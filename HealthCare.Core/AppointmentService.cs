@@ -43,27 +43,21 @@ namespace HealthCare.Core
             }
         }
 
-        public Appointment GetSpecificAppointment(Guid caregiverId, DateTime startTime)
+        public async Task<Appointment> GetSpecificAppointment(Guid caregiverId, DateTime startTime)
         {
 
-            var appointment = database.Appointments.Where(a => a.Caregiver.Id == caregiverId && a.StartTime == startTime).FirstOrDefault(); 
+            var appointment = database.Appointments.Where(a => a.Caregiver.Id == caregiverId && a.StartTime == startTime).FirstOrDefault();  
 
-            if (appointment == null) 
-            {
-                return null; 
-            }
-            else
-            {
-                return appointment;
-            }
+            return appointment;
         }
 
-        public void DeleteAppointment(Appointment appointment)
+        public async Task DeleteAppointment(Appointment appointment)
         {
             database.Appointments.Remove(appointment);
-            database.SaveChanges();
+            await database.SaveChangesAsync();
         }
-        
+
+
     }
     public class AppointmentServiceException : Exception
     {
