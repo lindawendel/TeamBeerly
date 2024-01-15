@@ -9,31 +9,78 @@
 @using HealthCare.Core.Data
 @using System.Security.Claims
 
+<div id="topTextBooking">
 
-<h3>Book an Appointment</h3>
+    <h3>Book an Appointment</h3>
 
-<input type="datetime-local" @bind="selectedTime" />
-
-<select @bind="selectedService" title="hej">
-    <option value="General Checkup">General Checkup</option>
-    <option value="Vaccination">Vaccination</option>
-    <option value="Amputation">Amputation</option>
-    <option value="Lobotomy">Lobotomy</option>
-    <option value="Mercury Treatment">Mercury Treatment</option>
-    <option value="Leech Therapy">Leech Therapy</option>
-    <option value="Electroshock Therapy">Electroshock Therapy</option>
-
-</select>
-<button @onclick="BookAppointment">Book</button>
-<button @onclick="BookAppointment">BookAppointment</button>
+</div>
+<div id="bookingFormTop">
 
 
-<select id="selectCaregiver">
-    @foreach (var gubbe in careGivers)
-    {
-        <option value="@gubbe.Id">@gubbe.Id</option>
-    }
-</select>
+    <div>
+
+        <select id="selectCaregiver" @onchange="SelectedCareGiver">
+            @foreach (var gubbe in careGivers)
+            {
+                <option value="@gubbe.Id">@gubbe.Name</option>
+            }
+        </select>
+
+
+
+    </div>
+
+    <div>
+
+        <select @bind="selectedService" title="hej">
+            <option value="General Checkup">General Checkup</option>
+            <option value="Vaccination">Vaccination</option>
+            <option value="Amputation">Amputation</option>
+            <option value="Lobotomy">Lobotomy</option>
+            <option value="Mercury Treatment">Mercury Treatment</option>
+            <option value="Leech Therapy">Leech Therapy</option>
+            <option value="Electroshock Therapy">Electroshock Therapy</option>
+
+        </select>
+
+    </div>
+
+    <div>
+
+        <select id="selectAppointmentTime" title="Select_Time">
+            @foreach (var appointment in availableAppointments)
+            {
+                <option value="@((object)appointment.StartTime).ToString(" yyyy-MM-dd HH:mm")">
+                    @((object)appointment.StartTime).ToString("yyyy-MM-dd HH:mm")
+                </option>
+            }
+        </select>
+
+
+
+    </div>
+
+    <div>
+
+        <button @onclick="BookAppointment">BookAppointment</button>
+
+
+    </div>
+
+    <div>
+        <button @onclick="ManualInteraction">Manual Interaction</button>
+    </div>
+
+
+</div>
+
+
+
+@* <button @onclick="BookAppointment">Book</button>
+ *@
+
+
+
 
 
 @if (isSaveSuccessful)
@@ -41,7 +88,14 @@
     <p style="color: green;">Booking confirmed!</p>
 }
 
+<h2>
 
+    @if (@selectedCaregiver != null)
+    {
+        @selectedCaregiver.Name
+    }
+
+</h2>
 
 @code {
     private DateTime selectedTime = DateTime.Now;
@@ -49,8 +103,9 @@
     private string selectedService = "General Checkup";
     private bool isSaveSuccessful = false;
     private List<Caregiver> careGivers = new List<Caregiver>();
+    private List<Appointment> availableAppointments = new List<Appointment>();
     private Guid selectedCaregiverId;
-
+    private Caregiver selectedCaregiver;
 
 
     protected override async Task OnInitializedAsync()
@@ -58,17 +113,47 @@
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
-        if (user.Identity.IsAuthenticated)
-
+        if (user != null && user.Identity.IsAuthenticated)
         {
             careGivers = CaregiverService.GetCaregivers().ToList();
+            selectedCaregiverId = careGivers.FirstOrDefault()?.Id ?? Guid.Empty;
 
             var auth0Id = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
             patient = DbContext.Patients.FirstOrDefault(p => p.Auth0Id == auth0Id);
         }
-
     }
+
+    private async Task ManualInteraction()
+    {
+        // Perform any manual interaction or debugging logic here
+        selectedCaregiver = careGivers.FirstOrDefault(g => g.Id == selectedCaregiverId);
+
+        if (selectedCaregiver != null)
+        {
+            // Update the available appointments based on the selected caregiver
+            availableAppointments = await AppointmentService.GetCaregiverAppointments(selectedCaregiver.Id);
+            StateHasChanged(); // Ensure the component is re-rendered after the async operation
+        }
+    }
+
+    private async Task SelectedCareGiver(ChangeEventArgs e)
+    {
+
+        // Assuming the values are Guids, adjust the parsing accordingly
+        if (Guid.TryParse(e.Value.ToString(), out Guid selectedId))
+        {
+            selectedCaregiverId = selectedId;
+            selectedCaregiver = careGivers.FirstOrDefault(g => g.Id == selectedCaregiverId);
+
+            if (selectedCaregiver != null)
+            {
+                // Update the available appointments based on the selected caregiver
+                availableAppointments = await AppointmentService.GetCaregiverAppointments(selectedCaregiver.Id);
+                StateHasChanged(); // Ensure the component is re-rendered after the async operation
+            }
+        }
+    }
+
 
     private async Task MakeAppointment()
     {

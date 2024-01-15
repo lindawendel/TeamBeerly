@@ -17,15 +17,33 @@ namespace HealthCare.Core
             this.database = database;
         }
 
+
         public async Task<List<Appointment>> GetCaregiverAppointments(Guid caregiverId)
         {
-           
+            try
+            {
                 var caregiverAppointments = await database.Appointments
                     .Where(appointment => appointment.Caregiver.Id == caregiverId)
                     .ToListAsync();
 
                 return caregiverAppointments;
+            }
+            catch (Exception ex)
+            {
+                // Log or handle the exception as needed
+                throw new AppointmentServiceException("Error retrieving caregiver appointments.", ex);
+            }
         }
+
+        /*        public async Task<List<Appointment>> GetCaregiverAppointments(Guid caregiverId)
+                {
+
+                        var caregiverAppointments = await database.Appointments
+                            .Where(appointment => appointment.Caregiver.Id == caregiverId)
+                            .ToListAsync();
+
+                        return caregiverAppointments;
+                }*/
 
 
         public async Task AddAppointment(Appointment newAppointment)
