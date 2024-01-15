@@ -12,5 +12,7 @@ namespace HealthCare.Core.Models
         public string? Title { get; set; }
         public string Comment { get; set; }
         public DateTime Time { get; set; }
+        public Patient Patient { get; set; } //prolly b a FK?
+        public Caregiver Caregiver { get; set; } //also proly a FK?
     }
 }
