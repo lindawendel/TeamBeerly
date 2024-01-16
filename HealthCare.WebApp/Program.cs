@@ -36,6 +36,8 @@ builder.Services.AddScoped<PatientService>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped<UserDataService>();
 builder.Services.AddScoped<CaregiverService>();
+builder.Services.AddScoped<ApplicationUserService>();
+
 
 
 builder.Services.AddScoped<HttpClient>(s =>

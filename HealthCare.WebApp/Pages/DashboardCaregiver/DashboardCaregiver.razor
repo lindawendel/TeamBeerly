@@ -3,8 +3,7 @@
 @inject HealthCareContext DbContext
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-
-<h3>Dashboard Caregiver</h3>
+<h3>My Page</h3>
 
 <div>
     <h5>Schedule</h5>
@@ -26,7 +25,7 @@
 
 <div class="profile">
     <h5>Profile</h5>
-    <label>Name: @Caregiver?.Name</label>
+    <label>@Caregiver.Role: @Caregiver?.Name</label>
     <label>Date of Birth: @Caregiver.DateOfBirth</label>
     <label>Phone Number: @Caregiver.PhoneNumber</label>
     <label>Email: @Caregiver.Email</label>
@@ -83,22 +82,6 @@
         GetAppointments();
     }
 
-    private void SeedData()
-    {
-        if (!DbContext.Caregivers.Any())
-        {
-            var caregiver1 = new Caregiver { Id = Guid.NewGuid(), Auth0Id = "123", Role = "Doctor", Name = "Emma Engberg", Email = "emma.e@example.com", };
-            var caregiver2 = new Caregiver { Id = Guid.NewGuid(), Auth0Id = "456", Role = "Nurse", Name = "Marcus Nilsson", Email = "marcus.n@example.com" };
-            var caregiver3 = new Caregiver { Id = Guid.NewGuid(), Auth0Id = "789", Role = "Doctor", Name = "Sandra Ask", Email = "sandra.a@example.com" };
-
-            DbContext.Caregivers.Add(caregiver1);
-            DbContext.Caregivers.Add(caregiver2);
-            DbContext.Caregivers.Add(caregiver3);
-
-            DbContext.SaveChanges();
-        }
-    }
-
     private async Task FetchUserDetails()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -135,6 +118,22 @@
                 .Include(a => a.Patient)
                 .OrderByDescending(a => a.StartTime)
                 .ToList();
+        }
+    }
+
+    private void SeedData()
+    {
+        if (!DbContext.Caregivers.Any())
+        {
+            var caregiver1 = new Caregiver { Id = Guid.NewGuid(), Auth0Id = "123", Role = "Doctor", Name = "Emma Engberg", Email = "emma.e@example.com", };
+            var caregiver2 = new Caregiver { Id = Guid.NewGuid(), Auth0Id = "456", Role = "Nurse", Name = "Marcus Nilsson", Email = "marcus.n@example.com" };
+            var caregiver3 = new Caregiver { Id = Guid.NewGuid(), Auth0Id = "789", Role = "Doctor", Name = "Sandra Ask", Email = "sandra.a@example.com" };
+
+            DbContext.Caregivers.Add(caregiver1);
+            DbContext.Caregivers.Add(caregiver2);
+            DbContext.Caregivers.Add(caregiver3);
+
+            DbContext.SaveChanges();
         }
     }
 }
