@@ -8,18 +8,11 @@
 
 @if (patient != null)
 {
-
-
     <div id="topTextBooking">
-
         <h3>Book an Appointment</h3>
-
     </div>
     <div id="bookingFormTop">
-
-
         <div>
-
             <select id="selectCaregiver" @onchange="SelectedCareGiver">
                 <option value="">Select a Caregiver</option>
                 @foreach (var gubbe in careGivers)
@@ -27,12 +20,9 @@
                     <option value="@gubbe.Id">@gubbe.Name</option>
                 }
             </select>
-
-
         </div>
 
         <div>
-
             <select @bind="selectedService" title="hej">
                 <option value="">Select a Service</option>
                 <option value="General Checkup">General Checkup</option>
@@ -42,13 +32,10 @@
                 <option value="Mercury Treatment">Mercury Treatment</option>
                 <option value="Leech Therapy">Leech Therapy</option>
                 <option value="Electroshock Therapy">Electroshock Therapy</option>
-
             </select>
-
         </div>
 
         <div>
-
             <select id="selectAppointmentTime" title="Select_Time" @bind="selectedAppointmentId">
                 <option value="">Select a Time</option>
                 @foreach (var appointment in availableAppointments)
@@ -58,112 +45,78 @@
                     </option>
                 }
             </select>
-
         </div>
 
         <div>
-
             <label for="description">Description:</label>
-            <textarea id="description" @bind="Description"></textarea>
-
+            <textarea id="description" @bind="description"></textarea>
         </div>
 
         <div>
-
-            <button @onclick="MakeAppointment">BookAppointment</button>
-
+             <button @onclick="MakeAppointment">BookAppointment</button> 
+            
 
         </div>
 
-
-
     </div>
-
-
-    <div>
-        @if (newAppointment != null)
-        {
-            <div>
-                <h4>New Appointment Details:</h4>
-                <p><strong>Patient:</strong> @newAppointment.Patient.Name</p>
-                <p><strong>Caregiver:</strong> @newAppointment.Caregiver.Name</p>
-                <p><strong>Service:</strong> @newAppointment.Service</p>
-                <p><strong>Start Time:</strong> @newAppointment.StartTime</p>
-                <p><strong>End Time:</strong> @newAppointment.EndTime</p>
-                <p><strong>Description:</strong> @Description</p>
-            </div>
-        }
-    </div>
-
-
-
-
 
     @if (isSaveSuccessful)
     {
         <p style="color: green;">Booking confirmed!</p>
+
+        <div>
+            @if (newAppointment != null)
+            {
+                <div>
+                    <h4>New Appointment Details:</h4>
+                    <p><strong>Patient:</strong> @newAppointment.Patient.Name</p>
+                    <p><strong>Caregiver:</strong> @newAppointment.Caregiver.Name</p>
+                    <p><strong>Service:</strong> @newAppointment.Service</p>
+                    <p><strong>Start Time:</strong> @newAppointment.StartTime</p>
+                    <p><strong>End Time:</strong> @newAppointment.EndTime</p>
+                    <p><strong>Description:</strong> @description</p>
+                </div>
+            }
+        </div>
     }
 
-    <h2>
-
-        @if (@selectedCaregiver != null)
-        {
-            @selectedCaregiver.Name
-        }
-
-    </h2>
 }
 else
 {
     <p>NO ACCESS</p>
 }
+
 @code {
-    private String Description;
+    private string description;
     private Guid selectedAppointmentId;
     private DateTime selectedTime;
-    private Patient patient;
-    private string selectedService = "General Checkup";
-    private bool isSaveSuccessful = false;
-    private List<Caregiver> careGivers = new List<Caregiver>();
-    private List<Appointment> allAppointments = new List<Appointment>();
-    private List<Appointment> availableAppointments = new List<Appointment>();
+    private string selectedService;
     private Guid selectedCaregiverId;
+
+    private bool isSaveSuccessful = false;
+
+    private Patient patient;
     private Caregiver selectedCaregiver;
+    private List<Caregiver> careGivers = new List<Caregiver>();
     private Appointment newAppointment;
+    private List<Appointment> availableAppointments = new List<Appointment>();
 
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-        allAppointments = await AppointmentService.GetAllAppointments();
 
-        if (user.Identity.IsAuthenticated) //might need user != null &&
+        if (user.Identity.IsAuthenticated) 
         {
-            careGivers = CaregiverService.GetCaregivers().ToList();
-            selectedCaregiverId = careGivers.FirstOrDefault()?.Id ?? Guid.Empty;
-
             var auth0Id = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             patient = DbContext.Patients.FirstOrDefault(p => p.Auth0Id == auth0Id);
         }
-    }
 
-    private async Task ManualInteraction()
-    {
-        // Perform any manual interaction or debugging logic here
-        selectedCaregiver = careGivers.FirstOrDefault(g => g.Id == selectedCaregiverId);
-
-        if (selectedCaregiver != null)
-        {
-            // Update the available appointments based on the selected caregiver
-            availableAppointments = allAppointments.Where(g => g.Caregiver.Id == selectedCaregiverId).ToList();
-            StateHasChanged(); // Ensure the component is re-rendered after the async operation
-        }
+        careGivers = CaregiverService.GetCaregivers().ToList();
     }
 
     private async Task SelectedCareGiver(ChangeEventArgs e)
     {
-
-        // Assuming the values are Guids, adjust the parsing accordingly
         if (Guid.TryParse(e.Value.ToString(), out Guid selectedId))
         {
             selectedCaregiverId = selectedId;
@@ -171,9 +124,8 @@ else
 
             if (selectedCaregiver != null)
             {
-                // Update the available appointments based on the selected caregiver
-                availableAppointments = await AppointmentService.GetCaregiverAppointments(selectedCaregiver.Id);
-                StateHasChanged(); // Ensure the component is re-rendered after the async operation
+                availableAppointments = await AppointmentService.GetCaregiverAvailableAppointments(selectedCaregiver.Id);
+                StateHasChanged(); 
             }
         }
     }
@@ -181,8 +133,6 @@ else
 
     private async Task MakeAppointment()
     {
-        var selectedCaregiver = careGivers.FirstOrDefault(g => g.Id == selectedCaregiverId);
-
         if (patient != null && !string.IsNullOrEmpty(selectedService) && selectedAppointmentId != Guid.Empty)
         {
             var selectedAppointment = availableAppointments.FirstOrDefault(a => a.Id == selectedAppointmentId);
@@ -191,30 +141,21 @@ else
             {
                 selectedAppointment.Patient = patient;
                 selectedAppointment.Service = selectedService;
-                selectedAppointment.Description = Description;
+                selectedAppointment.Description = description;
                 selectedAppointment.IsBooked = true;
 
-                DbContext.SaveChanges();
+                await DbContext.SaveChangesAsync();
 
                 isSaveSuccessful = true;
+
+                newAppointment = selectedAppointment;
+
+                availableAppointments = await AppointmentService.GetCaregiverAvailableAppointments(selectedCaregiverId);
+
+               StateHasChanged();
+               
             }
         }
     }
 
-    // private async Task BookAppointment()
-    // {
-    //     if (patient != null && !string.IsNullOrEmpty(selectedService))
-    //     {
-    //         var newBooking = new Booking
-    //             {
-    //                 Time = selectedTime,
-    //                 PatientId = patient.Id,
-    //                 Service = selectedService
-    //             };
-
-    //         BookingService.AddBooking(newBooking);
-
-    //         isSaveSuccessful = true;
-    //     }
-    // }
 }
