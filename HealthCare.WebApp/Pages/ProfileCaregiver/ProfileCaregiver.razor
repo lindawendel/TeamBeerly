@@ -4,35 +4,42 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
 
-<NavLink class="nav-link" href="dashboard">Back</NavLink>
-
-<h3>Profile</h3>
-
-<div>
-    <label>Name:</label>
-    <input @bind="Caregiver.Name" />
-</div>
-
-<div>
-    <label>Date of Birth:</label>
-    <input @bind="Caregiver.DateOfBirth" />
-</div>
-
-<div>
-    <label>Phone Number:</label>
-    <input @bind="Caregiver.PhoneNumber" />
-</div>
-
-<div>
-    <label>Email:</label>
-    <input @bind="Caregiver.Email" />
-</div>
-
-<button @onclick="SaveCaregiverProfile">Save</button>
-@if (isSaveSuccessful)
+@if (Caregiver != null)
 {
-    <p style="color: green;">Changes saved successfully!</p>
-    DelayedRedirect();
+    <NavLink class="nav-link" href="dashboard">Back</NavLink>
+
+    <h3>Profile</h3>
+
+    <div>
+        <label>Name:</label>
+        <input @bind="Caregiver.Name" />
+    </div>
+
+    <div>
+        <label>Date of Birth:</label>
+        <input @bind="Caregiver.DateOfBirth" />
+    </div>
+
+    <div>
+        <label>Phone Number:</label>
+        <input @bind="Caregiver.PhoneNumber" />
+    </div>
+
+    <div>
+        <label>Email:</label>
+        <input @bind="Caregiver.Email" />
+    </div>
+
+    <button @onclick="SaveCaregiverProfile">Save</button>
+    @if (isSaveSuccessful)
+    {
+        <p style="color: green;">Changes saved successfully!</p>
+        DelayedRedirect();
+    }
+}
+else
+{
+    <p>NO ACCESS</p>
 }
 
 @code {

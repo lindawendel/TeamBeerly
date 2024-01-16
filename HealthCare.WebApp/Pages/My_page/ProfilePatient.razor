@@ -4,40 +4,47 @@
 @inject PatientService PatientService
 @inject NavigationManager NavigationManager
 
-<h3>Profile</h3>
-
-<EditForm Model="patient" OnValidSubmit="SavePatientProfile">
-    <DataAnnotationsValidator />
-    <div>
-        <label>Name:</label>
-        <input @bind="patient.Name" />
-        <ValidationMessage For="@(() => patient.Name)" />
-    </div>
-
-    <div>
-        <label>Date of Birth:</label>
-        <input type="date" @bind="patient.DateOfBirth" />
-        <ValidationMessage For="@(() => patient.DateOfBirth)" />
-    </div>
-
-    <div>
-        <label>Phone Number:</label>
-        <input @bind="patient.PhoneNumber" />
-        <ValidationMessage For="@(() => patient.PhoneNumber)" />
-    </div>
-
-    <div>
-        <label>Email:</label>
-        <input type="text" @bind="patient.Email" />
-        <ValidationMessage For="@(() => patient.Email)" />
-    </div>
-    <button type="submit">Save</button>
-</EditForm>
-
-@if (isSaveSuccessful)
+@if (patient != null)
 {
-    <p style="color: green;">Changes saved successfully!</p>
-    DelayedRedirect();
+    <h3>Profile</h3>
+
+    <EditForm Model="patient" OnValidSubmit="SavePatientProfile">
+        <DataAnnotationsValidator />
+        <div>
+            <label>Name:</label>
+            <input @bind="patient.Name" />
+            <ValidationMessage For="@(() => patient.Name)" />
+        </div>
+
+        <div>
+            <label>Date of Birth:</label>
+            <input type="date" @bind="patient.DateOfBirth" />
+            <ValidationMessage For="@(() => patient.DateOfBirth)" />
+        </div>
+
+        <div>
+            <label>Phone Number:</label>
+            <input @bind="patient.PhoneNumber" />
+            <ValidationMessage For="@(() => patient.PhoneNumber)" />
+        </div>
+
+        <div>
+            <label>Email:</label>
+            <input type="text" @bind="patient.Email" />
+            <ValidationMessage For="@(() => patient.Email)" />
+        </div>
+        <button type="submit">Save</button>
+    </EditForm>
+
+    @if (isSaveSuccessful)
+    {
+        <p style="color: green;">Changes saved successfully!</p>
+        DelayedRedirect();
+    }
+}
+else
+{
+    <p>NO ACCESS</p>
 }
 
 @code {
