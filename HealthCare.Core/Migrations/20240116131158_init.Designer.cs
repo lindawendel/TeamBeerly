@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HealthCare.Core.Migrations
 {
     [DbContext(typeof(HealthCareContext))]
-    [Migration("20240111113535_init")]
+    [Migration("20240116131158_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -132,9 +132,15 @@ namespace HealthCare.Core.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("CaregiverId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Comment")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("PatientId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Time")
                         .HasColumnType("datetime2");
@@ -143,6 +149,10 @@ namespace HealthCare.Core.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CaregiverId");
+
+                    b.HasIndex("PatientId");
 
                     b.ToTable("Feedbacks");
                 });
@@ -205,6 +215,25 @@ namespace HealthCare.Core.Migrations
                     b.HasOne("HealthCare.Core.Models.Patient", "Patient")
                         .WithMany("Appointments")
                         .HasForeignKey("PatientId");
+
+                    b.Navigation("Caregiver");
+
+                    b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("HealthCare.Core.Models.Feedback", b =>
+                {
+                    b.HasOne("HealthCare.Core.Models.Caregiver", "Caregiver")
+                        .WithMany()
+                        .HasForeignKey("CaregiverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HealthCare.Core.Models.Patient", "Patient")
+                        .WithMany()
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Caregiver");
 

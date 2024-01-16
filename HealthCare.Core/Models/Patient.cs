@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace HealthCare.Core.Models
@@ -24,6 +25,8 @@ namespace HealthCare.Core.Models
        
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string Email { get; set; }
+
+        [JsonIgnore]
         public List<Appointment> Appointments { get; set; }
     }
 }
