@@ -184,18 +184,12 @@
 
             if (selectedAppointment != null)
             {
-                newAppointment = new Appointment
-                    {
-                        Patient = patient,
-                        Caregiver = selectedCaregiver,
-                        StartTime = selectedAppointment.StartTime,
-                        EndTime = selectedAppointment.EndTime,
-                        Service = selectedService,
-                        Description = Description,
-                        IsBooked = true
-                    };
+                selectedAppointment.Patient = patient;
+                selectedAppointment.Service = selectedService;
+                selectedAppointment.Description = Description;
+                selectedAppointment.IsBooked = true;
 
-                await AppointmentService.AddAppointment(newAppointment);
+                DbContext.SaveChanges();
 
                 isSaveSuccessful = true;
             }
