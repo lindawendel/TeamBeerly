@@ -1,9 +1,13 @@
 ﻿@page "/feedback"
 @attribute [Authorize]
 @using HealthCare.Core.Models;
+@using HealthCare.Core.Data;
 @inject FeedbackService feedbackService
 @inject RatingService ratingService
 @inject IJSRuntime JSRuntime
+@inject HealthCareContext DbContext
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
 
 
 <h3>Leave Feedback</h3>
@@ -59,6 +63,8 @@ else
         <p>Title: @feedback.Title</p>
         <p>Comment: @feedback.Comment</p>
         <p>Time: @feedback.Time</p>
+        <p>Patient: @</p>
+        public Caregiver Caregiver { get; set; } //also proly a FK?
     </div>
 
 }
@@ -69,7 +75,13 @@ else
 @code {
     public HealthCare.Core.Models.Rating rating = new HealthCare.Core.Models.Rating();
 
+    public Patient patient;
+
+
     private int selectedRating;
+
+
+
 
     private async Task SaveRating()
     {
@@ -89,10 +101,18 @@ else
     //rename class or pages cuz nameed pages and classes collide
     public HealthCare.Core.Models.Feedback feedback = new HealthCare.Core.Models.Feedback();
 
-   
 
-    public void SubmitFeedback()
+
+    public async void SubmitFeedback()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var auth0Id = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        patient = DbContext.Patients.FirstOrDefault(p => p.Auth0Id == auth0Id);
+
+
+
+        feedback.Patient = patient;
         // Set the time before saving
         feedback.Time = DateTime.Now;
 
