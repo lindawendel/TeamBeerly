@@ -53,11 +53,17 @@ namespace HealthCare.WebApp
             }
         }
 
-        public async Task<Patient> GetCurrentPatient()
+        public async Task<Patient?> GetCurrentPatient()
         {
             var authId = await GetAuthId();
 
             return _dbContext.Patients.FirstOrDefault(p => p.Auth0Id == authId);
+        }
+
+        public async Task<Caregiver?> GetCurrentCaregiver()
+        {
+            var authId = await GetAuthId();
+            return _dbContext.Caregivers.FirstOrDefault(p => p.Auth0Id == authId);
         }
 
         public async Task<string> GetGivenName()

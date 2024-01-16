@@ -5,7 +5,6 @@
 @inject HealthCareContext DbContext
 @inject ApplicationUserService ApplicationUserService
 
-
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">
@@ -43,7 +42,7 @@
         <AuthorizeView>
             <Authorized>
                 <div class="nav-item px-3">
-                    @if (Access == false)
+                    @if (access == false)
                     {
                         <NavLink class="nav-link" href="booking">
                             <span class="oi oi-plus" aria-hidden="true"></span> Booking
@@ -61,7 +60,7 @@
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
-                    @if (Access == false)
+                    @if (access == false)
                     {
                         <NavLink class="nav-link" href="my_page">
                             <span class="oi oi-list-rich" aria-hidden="true"></span> My Page
@@ -69,13 +68,12 @@
                     }
                 </div>
                 <div class="nav-item px-3">
-                    @if (Access == true)
+                    @if (access == true)
                     {
                         <NavLink class="nav-link" href="dashboard">
                             <span class="oi oi-person" aria-hidden="true"></span> Dashboard
                         </NavLink>
                     }
-
                 </div>
             </Authorized>
         </AuthorizeView>
@@ -89,96 +87,17 @@
     public string userName = "";
     private Patient patient;
     private Caregiver caregiver;
-    public bool Access;
-
-    // List<string> auth0Ids = new List<string>
-    //     {
-    //         "auth0|659fce7eb2b6d54c87f82290",
-    //         "auth0|659fd055a4ffcf97947ac05b",
-    //         "auth0|659fd0d0b2b6d54c87f823d0",
-    //         "auth0|659fd1182c6a20cc35b2bc25",
-    //         "auth0|659fd140a4ffcf97947ac0de",
-    //         "auth0|659fd16f86e1aaad2fb02430"
-    //     };
-
+    public bool access;
 
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         currentUser = authState.User;
 
-        // string authID = await GetAuthId();
-
-        Access = await ApplicationUserService.IsCaregiver();
+        access = await ApplicationUserService.IsCaregiver();
 
         userName = await ApplicationUserService.GetUserName(patient, caregiver);
-
-        // string googleName = authState?.User?.FindFirst(ClaimTypes.GivenName)?.Value;
-
-        // if (googleName != null)
-        // {
-        //     userName = "Hej " + googleName;
-        // }
-        // else if (auth0Ids.Contains(authID))
-        // {
-        //     caregiver = DbContext.Caregivers.FirstOrDefault(p => p.Auth0Id == authID);
-
-        //     if (caregiver != null)
-        //     {
-        //         if (caregiver.Name == "Not provided Not provided")
-        //         {
-        //             userName = "";
-        //         }
-        //         else
-        //         {
-        //             userName = "Hej " + caregiver.Name;
-        //         }
-        //     }
-        //     else
-        //     {
-        //         userName = "";
-        //     }
-        // }
-        // else
-        // {
-        //     patient = await PatientService.GetCurrentPatient();
-
-        //     if (patient != null)
-        //     {
-        //         if (patient.Name == "Not provided Not provided")
-        //         {
-        //             userName = "";
-        //         }
-        //         else
-        //         {
-        //             userName = "Hej " + patient.Name;
-        //         }
-        //     }
-        // }
     }
-
-    // private async Task<string> GetAuthId()
-    // {
-    //     var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-    //     return authState.User.Claims
-    //             .Where(c => c.Type.Equals(ClaimTypes.NameIdentifier))
-    //             .Select(c => c.Value)
-    //             .FirstOrDefault() ?? string.Empty;
-    // }
-
-    // private async Task<bool> IsCaregiver()
-    // {
-    //     string authId = await GetAuthId();
-
-    //     if (auth0Ids.Contains(authId))
-    //     {
-    //         return true;
-    //     }
-    //     else
-    //     {
-    //         return false;
-    //     }
-    // }
 
     private void ToggleNavMenu()
     {
