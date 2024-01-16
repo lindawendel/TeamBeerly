@@ -41,7 +41,23 @@ namespace HealthCare.Core
             }
         }
 
-      
+        public async Task<List<Appointment>> GetCaregiverAvailableAppointments(Guid caregiverId)
+        {
+            try
+            {
+                var caregiverAppointments = await database.Appointments
+                    .Where(appointment => appointment.Caregiver.Id == caregiverId && appointment.IsBooked == false)
+                    .ToListAsync();
+
+                return caregiverAppointments;
+            }
+            catch (Exception ex)
+            {
+                throw new AppointmentServiceException("Error retrieving caregiver appointments.", ex);
+            }
+        }
+
+
         public async Task AddAppointment(Appointment newAppointment)
         {
             try
