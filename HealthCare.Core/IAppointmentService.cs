@@ -11,5 +11,6 @@ namespace HealthCare.Core
     {
         Task<List<Appointment>> GetCaregiverAppointments(Guid caregiverId);
         Task AddAppointment(Appointment newAppointment);
+        Task<List<Appointment>> GetCaregiverAvailableAppointments(Guid caregiverId);
     }
 }
