@@ -20,6 +20,7 @@
     <div>
 
         <select id="selectCaregiver" @onchange="SelectedCareGiver">
+            <option value="">Select a Caregiver</option>
             @foreach (var gubbe in careGivers)
             {
                 <option value="@gubbe.Id">@gubbe.Name</option>
@@ -27,12 +28,12 @@
         </select>
 
 
-
     </div>
 
     <div>
 
         <select @bind="selectedService" title="hej">
+            <option value="">Select a Service</option>
             <option value="General Checkup">General Checkup</option>
             <option value="Vaccination">Vaccination</option>
             <option value="Amputation">Amputation</option>
@@ -47,37 +48,47 @@
 
     <div>
 
-        <select id="selectAppointmentTime" title="Select_Time">
+        <select id="selectAppointmentTime" title="Select_Time" @bind="selectedAppointmentId">
+            <option value="">Select a Time</option>
             @foreach (var appointment in availableAppointments)
             {
-                <option value="@((object)appointment.StartTime).ToString(" yyyy-MM-dd HH:mm")">
-                    @((object)appointment.StartTime).ToString("yyyy-MM-dd HH:mm")
+                <option value="@(appointment.Id)">
+                    @((object)appointment.StartTime))
                 </option>
             }
         </select>
 
 
 
-    </div>
-
-    <div>
-
-        <button @onclick="BookAppointment">BookAppointment</button>
-
 
     </div>
 
     <div>
-        <button @onclick="ManualInteraction">Manual Interaction</button>
+
+        <button @onclick="MakeAppointment">BookAppointment</button>
+
+
     </div>
+
 
 
 </div>
 
 
-
-@* <button @onclick="BookAppointment">Book</button>
- *@
+<div>
+    @if (newAppointment != null)
+    {
+        <div>
+            <h4>New Appointment Details:</h4>
+            <p><strong>Patient:</strong> @newAppointment.Patient.Name</p>
+            <p><strong>Caregiver:</strong> @newAppointment.Caregiver.Name</p>
+            <p><strong>Service:</strong> @newAppointment.Service</p>
+            <p><strong>Start Time:</strong> @newAppointment.StartTime</p>
+            <p><strong>End Time:</strong> @newAppointment.EndTime</p>
+            <p><strong>Description:</strong> @newAppointment.Description</p>
+        </div>
+    }
+</div>
 
 
 
@@ -98,22 +109,25 @@
 </h2>
 
 @code {
-    private DateTime selectedTime = DateTime.Now;
+    private Guid selectedAppointmentId;
+    private DateTime selectedTime;
     private Patient patient;
     private string selectedService = "General Checkup";
     private bool isSaveSuccessful = false;
     private List<Caregiver> careGivers = new List<Caregiver>();
+    private List<Appointment> allAppointments = new List<Appointment>();
     private List<Appointment> availableAppointments = new List<Appointment>();
     private Guid selectedCaregiverId;
     private Caregiver selectedCaregiver;
-
+    private Appointment newAppointment;
 
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
+        allAppointments = await AppointmentService.GetAllAppointments();
 
-        if (user != null && user.Identity.IsAuthenticated)
+        if (user.Identity.IsAuthenticated) //might need user != null &&
         {
             careGivers = CaregiverService.GetCaregivers().ToList();
             selectedCaregiverId = careGivers.FirstOrDefault()?.Id ?? Guid.Empty;
@@ -131,7 +145,7 @@
         if (selectedCaregiver != null)
         {
             // Update the available appointments based on the selected caregiver
-            availableAppointments = await AppointmentService.GetCaregiverAppointments(selectedCaregiver.Id);
+            availableAppointments = allAppointments.Where(g => g.Caregiver.Id == selectedCaregiverId).ToList();
             StateHasChanged(); // Ensure the component is re-rendered after the async operation
         }
     }
@@ -159,40 +173,44 @@
     {
         var selectedCaregiver = careGivers.FirstOrDefault(g => g.Id == selectedCaregiverId);
 
-        if (patient != null && !string.IsNullOrEmpty(selectedService))
+        if (patient != null && !string.IsNullOrEmpty(selectedService) && selectedAppointmentId != Guid.Empty)
         {
-            var newAppointment = new Appointment
-                {
-                    Patient = patient,
-                    Caregiver = selectedCaregiver,
-                    StartTime = DateTime.Now.AddHours(6),
-                    EndTime = DateTime.Now.AddHours(8),
-                    Service = selectedService,
-                    Description = "whatever",
-                    IsBooked = true
-                };
+            var selectedAppointment = availableAppointments.FirstOrDefault(a => a.Id == selectedAppointmentId);
 
-            await AppointmentService.AddAppointment(newAppointment);
+            if (selectedAppointment != null)
+            {
+                newAppointment = new Appointment
+                    {
+                        Patient = patient,
+                        Caregiver = selectedCaregiver,
+                        StartTime = selectedAppointment.StartTime,
+                        EndTime = selectedAppointment.EndTime,
+                        Service = selectedService,
+                        Description = "whatever",
+                        IsBooked = true
+                    };
 
-            isSaveSuccessful = true;
+                await AppointmentService.AddAppointment(newAppointment);
 
+                isSaveSuccessful = true;
+            }
         }
     }
 
-    private async Task BookAppointment()
-    {
-        if (patient != null && !string.IsNullOrEmpty(selectedService))
-        {
-            var newBooking = new Booking
-                {
-                    Time = selectedTime,
-                    PatientId = patient.Id,
-                    Service = selectedService
-                };
+    // private async Task BookAppointment()
+    // {
+    //     if (patient != null && !string.IsNullOrEmpty(selectedService))
+    //     {
+    //         var newBooking = new Booking
+    //             {
+    //                 Time = selectedTime,
+    //                 PatientId = patient.Id,
+    //                 Service = selectedService
+    //             };
 
-            BookingService.AddBooking(newBooking);
+    //         BookingService.AddBooking(newBooking);
 
-            isSaveSuccessful = true;
-        }
-    }
+    //         isSaveSuccessful = true;
+    //     }
+    // }
 }

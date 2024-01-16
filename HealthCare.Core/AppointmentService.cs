@@ -5,6 +5,7 @@ using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.WebSockets;
 
 namespace HealthCare.Core
 {
@@ -17,6 +18,12 @@ namespace HealthCare.Core
             this.database = database;
         }
 
+        public async Task<List<Appointment>> GetAllAppointments()
+        {
+            var allAppointments = await database.Appointments.ToListAsync();
+
+                return allAppointments;
+        }
 
         public async Task<List<Appointment>> GetCaregiverAppointments(Guid caregiverId)
         {
