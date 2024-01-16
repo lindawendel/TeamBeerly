@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HealthCare.Core.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -119,24 +119,16 @@ namespace HealthCare.Core.Migrations
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Comment = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Time = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PatientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CaregiverId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    PatientId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Feedbacks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Feedbacks_Caregivers_CaregiverId",
-                        column: x => x.CaregiverId,
-                        principalTable: "Caregivers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_Feedbacks_Patients_PatientId",
                         column: x => x.PatientId,
                         principalTable: "Patients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -148,11 +140,6 @@ namespace HealthCare.Core.Migrations
                 name: "IX_Appointments_PatientId",
                 table: "Appointments",
                 column: "PatientId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Feedbacks_CaregiverId",
-                table: "Feedbacks",
-                column: "CaregiverId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Feedbacks_PatientId",

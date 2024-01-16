@@ -7,7 +7,7 @@
 @inject IJSRuntime JSRuntime
 @inject HealthCareContext DbContext
 @inject AuthenticationStateProvider AuthenticationStateProvider
-
+@inject ApplicationUserService ApplicationUserService
 
 
 <h3>Leave Feedback</h3>
@@ -59,12 +59,18 @@ else
 <h3 class="feedback">All Feedback</h3>
 @foreach (var feedback in feedbackService.GetAllFeedback())
 {
+
     <div>
+        <br />
         <p>Title: @feedback.Title</p>
         <p>Comment: @feedback.Comment</p>
         <p>Time: @feedback.Time</p>
-        <p>Patient: @</p>
-        public Caregiver Caregiver { get; set; } //also proly a FK?
+        @if (feedback.Patient != null)
+        {
+            <p>Patient: @feedback.Patient.Name</p>
+        }
+        <br />
+        <br />
     </div>
 
 }
@@ -75,16 +81,20 @@ else
 @code {
     public HealthCare.Core.Models.Rating rating = new HealthCare.Core.Models.Rating();
 
-    public Patient patient;
-
+    //public Patient patient;
+    private Patient patient;
 
     private int selectedRating;
 
-
-
+    protected override async Task OnInitializedAsync()
+    {
+        patient = await ApplicationUserService.GetCurrentPatient();
+    }
 
     private async Task SaveRating()
     {
+
+
         if (selectedRating > 0)
         {
             var rating = new Rating
@@ -105,10 +115,8 @@ else
 
     public async void SubmitFeedback()
     {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        var auth0Id = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        patient = DbContext.Patients.FirstOrDefault(p => p.Auth0Id == auth0Id);
+        
+        patient = await ApplicationUserService.GetCurrentPatient();
 
 
 
