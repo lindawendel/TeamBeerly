@@ -1,9 +1,13 @@
 ﻿@page "/feedback"
 @attribute [Authorize]
 @using HealthCare.Core.Models;
+@using HealthCare.Core.Data;
 @inject FeedbackService feedbackService
 @inject RatingService ratingService
 @inject IJSRuntime JSRuntime
+@inject HealthCareContext DbContext
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ApplicationUserService ApplicationUserService
 
 
 <h3>Leave Feedback</h3>
@@ -55,10 +59,18 @@ else
 <h3 class="feedback">All Feedback</h3>
 @foreach (var feedback in feedbackService.GetAllFeedback())
 {
+
     <div>
+        <br />
         <p>Title: @feedback.Title</p>
         <p>Comment: @feedback.Comment</p>
         <p>Time: @feedback.Time</p>
+        @if (feedback.Patient != null)
+        {
+            <p>Patient: @feedback.Patient.Name</p>
+        }
+        <br />
+        <br />
     </div>
 
 }
@@ -69,10 +81,20 @@ else
 @code {
     public HealthCare.Core.Models.Rating rating = new HealthCare.Core.Models.Rating();
 
+    //public Patient patient;
+    private Patient patient;
+
     private int selectedRating;
+
+    protected override async Task OnInitializedAsync()
+    {
+        patient = await ApplicationUserService.GetCurrentPatient();
+    }
 
     private async Task SaveRating()
     {
+
+
         if (selectedRating > 0)
         {
             var rating = new Rating
@@ -89,10 +111,16 @@ else
     //rename class or pages cuz nameed pages and classes collide
     public HealthCare.Core.Models.Feedback feedback = new HealthCare.Core.Models.Feedback();
 
-   
 
-    public void SubmitFeedback()
+
+    public async void SubmitFeedback()
     {
+        
+        patient = await ApplicationUserService.GetCurrentPatient();
+
+
+
+        feedback.Patient = patient;
         // Set the time before saving
         feedback.Time = DateTime.Now;
 

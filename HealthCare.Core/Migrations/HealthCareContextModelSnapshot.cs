@@ -17,7 +17,7 @@ namespace HealthCare.Core.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.0")
+                .HasAnnotation("ProductVersion", "7.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -129,14 +129,11 @@ namespace HealthCare.Core.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CaregiverId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Comment")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PatientId")
+                    b.Property<Guid?>("PatientId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Time")
@@ -146,8 +143,6 @@ namespace HealthCare.Core.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CaregiverId");
 
                     b.HasIndex("PatientId");
 
@@ -220,19 +215,9 @@ namespace HealthCare.Core.Migrations
 
             modelBuilder.Entity("HealthCare.Core.Models.Feedback", b =>
                 {
-                    b.HasOne("HealthCare.Core.Models.Caregiver", "Caregiver")
-                        .WithMany()
-                        .HasForeignKey("CaregiverId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("HealthCare.Core.Models.Patient", "Patient")
                         .WithMany()
-                        .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Caregiver");
+                        .HasForeignKey("PatientId");
 
                     b.Navigation("Patient");
                 });
