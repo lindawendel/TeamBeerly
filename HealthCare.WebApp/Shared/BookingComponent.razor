@@ -58,8 +58,12 @@
             }
         </select>
 
+    </div>
 
+    <div>
 
+        <label for="description">Description:</label>
+        <textarea id="description" @bind="Description"></textarea>
 
     </div>
 
@@ -85,7 +89,7 @@
             <p><strong>Service:</strong> @newAppointment.Service</p>
             <p><strong>Start Time:</strong> @newAppointment.StartTime</p>
             <p><strong>End Time:</strong> @newAppointment.EndTime</p>
-            <p><strong>Description:</strong> @newAppointment.Description</p>
+            <p><strong>Description:</strong> @Description</p>
         </div>
     }
 </div>
@@ -109,6 +113,7 @@
 </h2>
 
 @code {
+    private String Description;
     private Guid selectedAppointmentId;
     private DateTime selectedTime;
     private Patient patient;
@@ -186,7 +191,7 @@
                         StartTime = selectedAppointment.StartTime,
                         EndTime = selectedAppointment.EndTime,
                         Service = selectedService,
-                        Description = "whatever",
+                        Description = Description,
                         IsBooked = true
                     };
 
