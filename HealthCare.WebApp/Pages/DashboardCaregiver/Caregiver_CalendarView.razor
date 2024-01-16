@@ -10,21 +10,27 @@
 @layout MainLayout
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
+@if (caregiver != null)
+{
 
-<h3>Caregiver Availability Management</h3>
+    <h3>Caregiver Availability Management</h3>
 
-<!-- Form for adding new appointment slot -->
-<form @onsubmit="AddAppointmentSlot">
-    <label>Start Time:<input type="datetime-local" @bind="newAppointment.StartTime" required /></label>
+    <!-- Form for adding new appointment slot -->
+    <form @onsubmit="AddAppointmentSlot">
+        <label>Start Time:<input type="datetime-local" @bind="newAppointment.StartTime" required /></label>
 
-    <label>End Time:<input type="datetime-local" @bind="newAppointment.EndTime" required /></label>
+        <label>End Time:<input type="datetime-local" @bind="newAppointment.EndTime" required /></label>
 
-    <button type="submit">Add Slot</button>
-</form>
+        <button type="submit">Add Slot</button>
+    </form>
 
-<!-- FullCalendar to display existing appointment slots -->
-<div id='calendar'></div>
-
+    <!-- FullCalendar to display existing appointment slots -->
+    <div id='calendar'></div>
+}
+else
+{
+    <p>NO ACCESS</p>
+}
 @code {
     private List<Appointment> caregiverAppointments = new List<Appointment>();
     private Appointment newAppointment = new Appointment();
@@ -32,7 +38,7 @@
     private Caregiver caregiver;
 
     protected override void OnInitialized()
-    { 
+    {
         var authStateTask = Task.Run(() => AuthenticationStateProvider.GetAuthenticationStateAsync());
         authStateTask.Wait(); // This will block the current thread until the task is complete
         var authState = authStateTask.Result;
@@ -150,7 +156,7 @@
         if (appointment.IsBooked == false)
         {
 
-            appointmentService.DeleteAppointment(appointment); 
+            appointmentService.DeleteAppointment(appointment);
 
         }
         else

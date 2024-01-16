@@ -1,117 +1,122 @@
 ﻿@page "/booking"
 @attribute [Authorize]
-@using HealthCare.Core.Models;
 @inject BookingService BookingService
 @inject CaregiverService CaregiverService
 @inject AppointmentService AppointmentService
 @inject HealthCareContext DbContext
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@using HealthCare.Core.Data
-@using System.Security.Claims
 
-<div id="topTextBooking">
-
-    <h3>Book an Appointment</h3>
-
-</div>
-<div id="bookingFormTop">
-
-
-    <div>
-
-        <select id="selectCaregiver" @onchange="SelectedCareGiver">
-            <option value="">Select a Caregiver</option>
-            @foreach (var gubbe in careGivers)
-            {
-                <option value="@gubbe.Id">@gubbe.Name</option>
-            }
-        </select>
-
-
-    </div>
-
-    <div>
-
-        <select @bind="selectedService" title="hej">
-            <option value="">Select a Service</option>
-            <option value="General Checkup">General Checkup</option>
-            <option value="Vaccination">Vaccination</option>
-            <option value="Amputation">Amputation</option>
-            <option value="Lobotomy">Lobotomy</option>
-            <option value="Mercury Treatment">Mercury Treatment</option>
-            <option value="Leech Therapy">Leech Therapy</option>
-            <option value="Electroshock Therapy">Electroshock Therapy</option>
-
-        </select>
-
-    </div>
-
-    <div>
-
-        <select id="selectAppointmentTime" title="Select_Time" @bind="selectedAppointmentId">
-            <option value="">Select a Time</option>
-            @foreach (var appointment in availableAppointments)
-            {
-                <option value="@(appointment.Id)">
-                    @((object)appointment.StartTime))
-                </option>
-            }
-        </select>
-
-    </div>
-
-    <div>
-
-        <label for="description">Description:</label>
-        <textarea id="description" @bind="Description"></textarea>
-
-    </div>
-
-    <div>
-
-        <button @onclick="MakeAppointment">BookAppointment</button>
-
-
-    </div>
-
-
-
-</div>
-
-
-<div>
-    @if (newAppointment != null)
-    {
-        <div>
-            <h4>New Appointment Details:</h4>
-            <p><strong>Patient:</strong> @newAppointment.Patient.Name</p>
-            <p><strong>Caregiver:</strong> @newAppointment.Caregiver.Name</p>
-            <p><strong>Service:</strong> @newAppointment.Service</p>
-            <p><strong>Start Time:</strong> @newAppointment.StartTime</p>
-            <p><strong>End Time:</strong> @newAppointment.EndTime</p>
-            <p><strong>Description:</strong> @Description</p>
-        </div>
-    }
-</div>
-
-
-
-
-
-@if (isSaveSuccessful)
+@if (patient != null)
 {
-    <p style="color: green;">Booking confirmed!</p>
-}
 
-<h2>
 
-    @if (@selectedCaregiver != null)
+    <div id="topTextBooking">
+
+        <h3>Book an Appointment</h3>
+
+    </div>
+    <div id="bookingFormTop">
+
+
+        <div>
+
+            <select id="selectCaregiver" @onchange="SelectedCareGiver">
+                <option value="">Select a Caregiver</option>
+                @foreach (var gubbe in careGivers)
+                {
+                    <option value="@gubbe.Id">@gubbe.Name</option>
+                }
+            </select>
+
+
+        </div>
+
+        <div>
+
+            <select @bind="selectedService" title="hej">
+                <option value="">Select a Service</option>
+                <option value="General Checkup">General Checkup</option>
+                <option value="Vaccination">Vaccination</option>
+                <option value="Amputation">Amputation</option>
+                <option value="Lobotomy">Lobotomy</option>
+                <option value="Mercury Treatment">Mercury Treatment</option>
+                <option value="Leech Therapy">Leech Therapy</option>
+                <option value="Electroshock Therapy">Electroshock Therapy</option>
+
+            </select>
+
+        </div>
+
+        <div>
+
+            <select id="selectAppointmentTime" title="Select_Time" @bind="selectedAppointmentId">
+                <option value="">Select a Time</option>
+                @foreach (var appointment in availableAppointments)
+                {
+                    <option value="@(appointment.Id)">
+                        @((object)appointment.StartTime))
+                    </option>
+                }
+            </select>
+
+        </div>
+
+        <div>
+
+            <label for="description">Description:</label>
+            <textarea id="description" @bind="Description"></textarea>
+
+        </div>
+
+        <div>
+
+            <button @onclick="MakeAppointment">BookAppointment</button>
+
+
+        </div>
+
+
+
+    </div>
+
+
+    <div>
+        @if (newAppointment != null)
+        {
+            <div>
+                <h4>New Appointment Details:</h4>
+                <p><strong>Patient:</strong> @newAppointment.Patient.Name</p>
+                <p><strong>Caregiver:</strong> @newAppointment.Caregiver.Name</p>
+                <p><strong>Service:</strong> @newAppointment.Service</p>
+                <p><strong>Start Time:</strong> @newAppointment.StartTime</p>
+                <p><strong>End Time:</strong> @newAppointment.EndTime</p>
+                <p><strong>Description:</strong> @Description</p>
+            </div>
+        }
+    </div>
+
+
+
+
+
+    @if (isSaveSuccessful)
     {
-        @selectedCaregiver.Name
+        <p style="color: green;">Booking confirmed!</p>
     }
 
-</h2>
+    <h2>
 
+        @if (@selectedCaregiver != null)
+        {
+            @selectedCaregiver.Name
+        }
+
+    </h2>
+}
+else
+{
+    <p>NO ACCESS</p>
+}
 @code {
     private String Description;
     private Guid selectedAppointmentId;
@@ -184,18 +189,12 @@
 
             if (selectedAppointment != null)
             {
-                newAppointment = new Appointment
-                    {
-                        Patient = patient,
-                        Caregiver = selectedCaregiver,
-                        StartTime = selectedAppointment.StartTime,
-                        EndTime = selectedAppointment.EndTime,
-                        Service = selectedService,
-                        Description = Description,
-                        IsBooked = true
-                    };
+                selectedAppointment.Patient = patient;
+                selectedAppointment.Service = selectedService;
+                selectedAppointment.Description = Description;
+                selectedAppointment.IsBooked = true;
 
-                await AppointmentService.AddAppointment(newAppointment);
+                DbContext.SaveChanges();
 
                 isSaveSuccessful = true;
             }

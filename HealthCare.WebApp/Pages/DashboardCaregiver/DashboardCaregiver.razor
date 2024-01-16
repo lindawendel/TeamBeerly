@@ -3,34 +3,84 @@
 @inject HealthCareContext DbContext
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
+@if (Caregiver != null)
+{
 
-<h3>Dashboard Caregiver</h3>
+    <h3>My Page</h3>
 
-<div>
-    <h5>Schedule</h5>
-    <NavLink class="nav-link" href="Caregiver_CalendarView">Manage Availability</NavLink>
-</div>
+    <div>
+        <h5>Schedule</h5>
+        <NavLink class="nav-link" href="Caregiver_CalendarView">Manage Availability</NavLink>
+    </div>
 
-<div class="upcomingApointments">
+    @* <div class="upcomingApointments">
     <h5>Upcoming Appointments</h5>
 </div>
 
 <div class="pastAppointments">
     <h5>Past Appointments</h5>
-</div>
+</div> *@
 
-<div class="profile">
-    <h5>Profile</h5>
-    <label>Name: @Caregiver?.Name</label>
-    <label>Date of Birth: @Caregiver.DateOfBirth</label>
-    <label>Phone Number: @Caregiver.PhoneNumber</label>
-    <label>Email: @Caregiver.Email</label>
-    <NavLink class="nav-link" href="profile"> Edit Profile </NavLink>
-</div>
+    @if (!string.IsNullOrEmpty(profileImage))
+    {
+        <img src="@profileImage
+        " alt="Profile Image" />
+    }
+
+    <div class="profile">
+        <h5>Profile</h5>
+        <label>@Caregiver.Role: @Caregiver?.Name</label>
+        <label>Date of Birth: @Caregiver.DateOfBirth</label>
+        <label>Phone Number: @Caregiver.PhoneNumber</label>
+        <label>Email: @Caregiver.Email</label>
+        <NavLink class="nav-link" href="profile"> Edit Profile </NavLink>
+    </div>
+
+    @if (upcomingAppointments.Count > 0)
+    {
+        <div class="upcomingPatientAppointments">
+            <h5>Upcoming Appointments</h5>
+            <ol>
+                @foreach (var appointment in upcomingAppointments)
+                {
+                    <li>
+                        <p>Date & Time: @appointment.StartTime</p>
+                        <p>Patient: @appointment.Patient.Name</p>
+                        <p>Service: @appointment.Service</p>
+                        <p>Description: @appointment.Description</p>
+                        <p><NavLink class="nav-link" href="dashboard"> Cancel appointment </NavLink></p>
+                    </li>
+                }
+            </ol>
+        </div>
+    }
+
+    @if (pastAppointments.Count > 0)
+    {
+        <div class="pastPatientAppointments">
+            <h5>Past Appointments</h5>
+            <ol>
+                @foreach (var appointment in pastAppointments)
+                {
+                    <li>
+                        <p>Date & Time: @appointment.StartTime</p>
+                        <p>Caregiver: @appointment.Caregiver.Name</p>
+                        <p> @appointment.Service</p>
+                    </li>
+                }
+            </ol>
+        </div>
+    }
+}
+else
+{
+    <p>NO ACCESS</p>
+}
 
 @code {
-    private List<Appointment> UpcomingAppointments = new List<Appointment>();
-    private List<Appointment> PastAppointments = new List<Appointment>();
+    private string profileImage;
+    private List<Appointment> upcomingAppointments = new List<Appointment>();
+    private List<Appointment> pastAppointments = new List<Appointment>();
     private Caregiver Caregiver;
 
     protected override void OnInitialized()
@@ -38,22 +88,6 @@
         SeedData();
         FetchUserDetails();
         GetAppointments();
-    }
-
-    private void SeedData()
-    {
-        if (!DbContext.Caregivers.Any())
-        {
-            var caregiver1 = new Caregiver { Id = Guid.NewGuid(), Auth0Id = "123", Role = "Doctor", Name = "Emma Engberg", Email = "emma.e@example.com", };
-            var caregiver2 = new Caregiver { Id = Guid.NewGuid(), Auth0Id = "456", Role = "Nurse", Name = "Marcus Nilsson", Email = "marcus.n@example.com" };
-            var caregiver3 = new Caregiver { Id = Guid.NewGuid(), Auth0Id = "789", Role = "Doctor", Name = "Sandra Ask", Email = "sandra.a@example.com" };
-
-            DbContext.Caregivers.Add(caregiver1);
-            DbContext.Caregivers.Add(caregiver2);
-            DbContext.Caregivers.Add(caregiver3);
-
-            DbContext.SaveChanges();
-        }
     }
 
     private async Task FetchUserDetails()
@@ -64,6 +98,8 @@
                    .Where(c => c.Type.Equals(ClaimTypes.NameIdentifier))
                    .Select(c => c.Value)
                    .FirstOrDefault() ?? string.Empty;
+
+        profileImage = authState.User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value ?? string.Empty;
 
         GetCaregiver(userId);
     }
@@ -79,17 +115,33 @@
 
         if (Caregiver != null)
         {
-            UpcomingAppointments = DbContext.Appointments
-                .Where(a => a.StartTime > now && a.Caregiver.Id == Caregiver.Id)
+            upcomingAppointments = DbContext.Appointments
+                .Where(a => a.StartTime > now && a.Caregiver.Id == Caregiver.Id && a.IsBooked == true)
                 .Include(a => a.Patient)
                 .OrderBy(a => a.StartTime)
                 .ToList();
 
-            PastAppointments = DbContext.Appointments
-                .Where(a => a.StartTime < now && a.Caregiver.Id == Caregiver.Id)
+            pastAppointments = DbContext.Appointments
+                .Where(a => a.StartTime < now && a.Caregiver.Id == Caregiver.Id && a.IsBooked == true)
                 .Include(a => a.Patient)
                 .OrderByDescending(a => a.StartTime)
                 .ToList();
+        }
+    }
+
+    private void SeedData()
+    {
+        if (!DbContext.Caregivers.Any())
+        {
+            var caregiver1 = new Caregiver { Id = Guid.NewGuid(), Auth0Id = "123", Role = "Doctor", Name = "Emma Engberg", Email = "emma.e@example.com", };
+            var caregiver2 = new Caregiver { Id = Guid.NewGuid(), Auth0Id = "456", Role = "Nurse", Name = "Marcus Nilsson", Email = "marcus.n@example.com" };
+            var caregiver3 = new Caregiver { Id = Guid.NewGuid(), Auth0Id = "789", Role = "Doctor", Name = "Sandra Ask", Email = "sandra.a@example.com" };
+
+            DbContext.Caregivers.Add(caregiver1);
+            DbContext.Caregivers.Add(caregiver2);
+            DbContext.Caregivers.Add(caregiver3);
+
+            DbContext.SaveChanges();
         }
     }
 }
