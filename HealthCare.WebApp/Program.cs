@@ -32,7 +32,6 @@ builder.Services.AddScoped<FeedbackService>();
 builder.Services.AddScoped<AppointmentService>();
 builder.Services.AddScoped<BookingService>();
 builder.Services.AddScoped<RatingService>();
-builder.Services.AddScoped<PatientService>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped<UserDataService>();
 builder.Services.AddScoped<CaregiverService>();

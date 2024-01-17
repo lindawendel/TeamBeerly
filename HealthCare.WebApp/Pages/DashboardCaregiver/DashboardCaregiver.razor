@@ -2,8 +2,9 @@
 @attribute [Authorize]
 @inject HealthCareContext DbContext
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ApplicationUserService ApplicationUserService
 
-@if (Caregiver != null)
+@if (caregiver != null)
 {
 
     <h3>My Page</h3>
@@ -22,10 +23,10 @@
 
     <div class="profile">
         <h5>Profile</h5>
-        <label>@Caregiver.Role: @Caregiver?.Name</label>
-        <label>Date of Birth: @Caregiver.DateOfBirth</label>
-        <label>Phone Number: @Caregiver.PhoneNumber</label>
-        <label>Email: @Caregiver.Email</label>
+        <label>@caregiver.Role: @caregiver?.Name</label>
+        <label>Date of Birth: @caregiver.DateOfBirth</label>
+        <label>Phone Number: @caregiver.PhoneNumber</label>
+        <label>Email: @caregiver.Email</label>
         <NavLink class="nav-link" href="profile"> Edit Profile </NavLink>
     </div>
 
@@ -74,48 +75,33 @@ else
     private string profileImage;
     private List<Appointment> upcomingAppointments = new List<Appointment>();
     private List<Appointment> pastAppointments = new List<Appointment>();
-    private Caregiver Caregiver;
+    private Caregiver caregiver;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        caregiver = await ApplicationUserService.GetCurrentCaregiver();
+        profileImage = await ApplicationUserService.GetProfilePicture();
+
         SeedData();
-        FetchUserDetails();
         GetAppointments();
-    }
 
-    private async Task FetchUserDetails()
-    {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-
-        var userId = authState.User.Claims
-                   .Where(c => c.Type.Equals(ClaimTypes.NameIdentifier))
-                   .Select(c => c.Value)
-                   .FirstOrDefault() ?? string.Empty;
-
-        profileImage = authState.User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value ?? string.Empty;
-
-        GetCaregiver(userId);
-    }
-
-    private void GetCaregiver(string authId)
-    {
-        Caregiver = DbContext.Caregivers.FirstOrDefault(p => p.Auth0Id == authId);
+        await base.OnInitializedAsync();
     }
 
     private void GetAppointments()
     {
         var now = DateTime.Now;
 
-        if (Caregiver != null)
+        if (caregiver != null)
         {
             upcomingAppointments = DbContext.Appointments
-                .Where(a => a.StartTime > now && a.Caregiver.Id == Caregiver.Id && a.IsBooked == true)
+                .Where(a => a.StartTime > now && a.Caregiver.Id == caregiver.Id && a.IsBooked == true)
                 .Include(a => a.Patient)
                 .OrderBy(a => a.StartTime)
                 .ToList();
 
             pastAppointments = DbContext.Appointments
-                .Where(a => a.StartTime < now && a.Caregiver.Id == Caregiver.Id && a.IsBooked == true)
+                .Where(a => a.StartTime < now && a.Caregiver.Id == caregiver.Id && a.IsBooked == true)
                 .Include(a => a.Patient)
                 .OrderByDescending(a => a.StartTime)
                 .ToList();

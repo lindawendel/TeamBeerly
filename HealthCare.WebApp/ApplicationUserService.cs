@@ -11,13 +11,11 @@ namespace HealthCare.WebApp
     {
         private HealthCareContext _dbContext;
         private AuthenticationStateProvider _authState;
-        private PatientService _patientService;
 
-        public ApplicationUserService(HealthCareContext dbContext, AuthenticationStateProvider authenticationStateProvider, PatientService patientService)
+        public ApplicationUserService(HealthCareContext dbContext, AuthenticationStateProvider authenticationStateProvider)
         {
             _dbContext = dbContext;
             _authState = authenticationStateProvider;
-            _patientService = patientService;
         }
 
         List<string> auth0Ids = new List<string>
@@ -106,7 +104,7 @@ namespace HealthCare.WebApp
             }
             else
             {
-                patient = await _patientService.GetCurrentPatient();
+                patient = await GetCurrentPatient();
 
                 if (patient != null)
                 {
@@ -124,7 +122,6 @@ namespace HealthCare.WebApp
                     return "";
                 }
             }
-            return "";
         }
 
         public async Task<string?> GetProfilePicture()
