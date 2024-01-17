@@ -17,7 +17,6 @@ if (window.FullCalendar) {
                 hour12: false
             },
             timeZone: 'Europe/Stockholm', 
-            /*slotLabelInterval: '00:45:00',*/
             businessHours: {
                 daysOfWeek: [1, 2, 3, 4, 5],
                 startTime: '09:00',
@@ -67,10 +66,9 @@ if (window.FullCalendar) {
                 if (userConfirmed) {
                     event.remove();
                     dotnetReference.invokeMethodAsync('CancelAppointmentFromCalendar', event.start, event.end);
-                    alert('Canceled!');
+ 
                 }
             },
-            // ... other common options
         };
 
         // Customize calendarOptions for 'caregivers' view

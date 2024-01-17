@@ -155,9 +155,9 @@ else
 
         if (appointment.IsBooked == false)
         {
-
             appointmentService.DeleteAppointment(appointment);
 
+            await JSRuntime.InvokeVoidAsync("alert", "Canceled!");
         }
         else
         {
