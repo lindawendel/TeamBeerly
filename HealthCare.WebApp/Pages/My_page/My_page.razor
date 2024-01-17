@@ -1,6 +1,6 @@
 ﻿@page "/my_page"
 @attribute [Authorize]
-@inject PatientService PatientService
+@inject ApplicationUserService ApplicationUserService
 @inject AppointmentService appointmentService
 @inject HealthCareContext DbContext
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -73,8 +73,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        patient = await PatientService.GetCurrentPatient();
-        profileImage = await PatientService.GetProfilePicture();
+        patient = await ApplicationUserService.GetCurrentPatient();
+        profileImage = await ApplicationUserService.GetProfilePicture();
 
         GetAppointments();
 

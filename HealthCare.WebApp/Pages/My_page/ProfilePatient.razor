@@ -1,7 +1,7 @@
 ﻿@page "/my_page/profile"
 @attribute [Authorize]
 @inject HealthCareContext DbContext
-@inject PatientService PatientService
+@inject ApplicationUserService ApplicationUserService
 @inject NavigationManager NavigationManager
 
 @if (patient != null)
@@ -53,10 +53,12 @@ else
     private bool isSaveSuccessful = false;
     private ValidationMessageStore validationMessages;
 
-    protected override async void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        patient = await PatientService.GetCurrentPatient();
+        patient = await ApplicationUserService.GetCurrentPatient();
         validationMessages = new ValidationMessageStore(EditContext);
+
+        await base.OnInitializedAsync();
     }
 
     private void SavePatientProfile()
