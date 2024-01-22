@@ -39,7 +39,7 @@
                     <p>Date & Time: @appointment.StartTime</p>
                     <p>Caregiver: @appointment.Caregiver.Name</p>
                     <p> @appointment.Service</p>
-                    <p><NavLink class="nav-link" href="my_page"> Cancel appointment </NavLink></p>
+                    <button @onclick="() => CancelAppointment(appointment)">Cancel appointment</button>
                 </li>
             }
         </ol>
@@ -81,7 +81,7 @@ else
         await base.OnInitializedAsync();
     }
 
-   private void GetAppointments()
+    private void GetAppointments()
     {
         var now = DateTime.Now;
 
@@ -100,4 +100,16 @@ else
                 .ToList();
         }
     }
+
+    private async void CancelAppointment(Appointment appointment)
+    {
+
+        appointment.Patient = null;
+        appointment.Service = null;
+        appointment.Description = null;
+        appointment.IsBooked = false;
+
+        await DbContext.SaveChangesAsync();
+    }
+    
 }

@@ -5,45 +5,50 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using HealthCare.Core.Data;
+using Microsoft.Extensions.Configuration;
 
 namespace HealthCareTests
 {
-    /*public class BookingServiceTests : IDisposable
+    //funkar på local om man har en DB
+
+   /* public class AppointmentServiceTests
     {
         private readonly HealthCareContext _context;
-        private readonly BookingService _bookingService;
+        private readonly AppointmentService _appointmentService;
 
-        public BookingServiceTests()
+        public AppointmentServiceTests()
         {
-            // Use a unique database name for each test
+            // Use the configuration system to get the connection string based on the environment
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json") // Update the file name if necessary
+                .Build();
+
+            // Output the value of the connection string for debugging purposes
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            Console.WriteLine($"Connection String: {connectionString}");
+
             var options = new DbContextOptionsBuilder<HealthCareContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .UseSqlServer(connectionString)
                 .Options;
 
             _context = new HealthCareContext(options);
-            _bookingService = new BookingService(_context);
+            _appointmentService = new AppointmentService(_context);
         }
 
         [Fact]
-        public void Should_Add_A_Booking_To_DB_Using_BookingService()
+        public void Should_Add_A_Appointment_To_DB_Using_AppointmentService()
         {
             // Arrange
-            var patient = new Patient { Id = Guid.NewGuid(), Name = "Muppet Muppeteo", Email = "jon.jon@example.com" };
-            var booking = new Booking { Id = Guid.NewGuid(), Time = DateTime.Now.AddHours(2), Patient = patient, Service = "General Checkup" };
+            var patient = _context.Patients.FirstOrDefault();
+            var appointment = new Appointment { Id = Guid.NewGuid(), StartTime = DateTime.Now.AddHours(2), Patient = patient, Service = "General Checkup" };
 
             // Act
-            _bookingService.AddBooking(booking);
+            _appointmentService.AddAppointment(appointment);
 
             // Assert
-            var addedBooking = _context.Bookings.FirstOrDefault(b => b.Service == "General Checkup");
-            Assert.NotNull(addedBooking);
-            Assert.Equal(patient.Name, addedBooking.Patient.Name);
-        }
-
-        public void Dispose()
-        {
-            // Dispose of the context after each test
-            _context.Dispose();
+            var addedAppointment = _context.Appointments.FirstOrDefault(b => b.Patient == patient);
+            Assert.NotNull(appointment);
+            Assert.Equal(patient.Name, appointment.Patient.Name);
         }
     }*/
 }
