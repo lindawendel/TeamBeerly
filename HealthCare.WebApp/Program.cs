@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.OpenApi.Models;
 using HealthCare.WebApp.Pages.Service;
 using HealthCare.WebApp;
+using HealthCare.WebApp.ForTestingOnly;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,7 +38,7 @@ builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped<UserDataService>();
 builder.Services.AddScoped<CaregiverService>();
 builder.Services.AddScoped<ApplicationUserService>();
-
+builder.Services.AddScoped<IMailService, InMemoryMailService>();
 
 
 builder.Services.AddScoped<HttpClient>(s =>
