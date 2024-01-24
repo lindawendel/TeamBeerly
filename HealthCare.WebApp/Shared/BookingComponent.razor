@@ -1,10 +1,14 @@
 ﻿@page "/booking"
+@using System.Net.Mail
+@using System.Net
+@using HealthCare.WebApp.ForTestingOnly
 @attribute [Authorize]
 @inject BookingService BookingService
 @inject CaregiverService CaregiverService
 @inject AppointmentService AppointmentService
 @inject HealthCareContext DbContext
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IMailService MailService
 
 @if (patient != null)
 {
@@ -80,6 +84,26 @@
         </div>
     }
 
+    <button @onclick="SendTestEmail">Send Test Email</button>
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+
+
+    <div>
+        <h4>Sent Emails:</h4>
+        @foreach (var email in MailService.GetSentEmails())
+        {
+            <div>
+                <p><strong>To:</strong> @email.To</p>
+                <p><strong>Subject:</strong> @email.Subject</p>
+                <p><strong>Body:</strong> @email.Body</p>
+            </div>
+        }
+    </div>
 }
 else
 {
@@ -150,12 +174,70 @@ else
 
                 newAppointment = selectedAppointment;
 
+                //if (!string.IsNullOrEmpty(patient.Email))
+                //{
+                await MailService.SendEmailAsync(patient.Email, "Appointment Confirmation", GetConfirmationEmailBody(newAppointment));                //}
+
                 availableAppointments = await AppointmentService.GetCaregiverAvailableAppointments(selectedCaregiverId);
 
-               StateHasChanged();
-               
+                StateHasChanged();
+
             }
         }
+
+
+    }
+
+    private async Task SendAppointmentConfirmationEmail(string toEmail, Appointment appointment)
+    {
+        try
+        {
+            var smtpClient = new SmtpClient
+                {
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = true, // this should use the "default"
+                };
+
+            var mailMessage = new MailMessage
+                {
+                    From = new MailAddress("frexminator@gmail.com"),
+                    Subject = "Appointment Confirmation",
+                    Body = $"Dear {patient.Name},\n\nYour appointment has been confirmed. Details:\n\n" +
+                           $"Caregiver: {appointment.Caregiver.Name}\n" +
+                           $"Service: {appointment.Service}\n" +
+                           $"Start Time: {appointment.StartTime}\n" +
+                           $"End Time: {appointment.EndTime}\n" +
+                           $"Description: {description}\n\n" +
+                           "Thank you for choosing our services.",
+                    IsBodyHtml = false,
+                };
+
+            mailMessage.To.Add(toEmail);
+
+            await smtpClient.SendMailAsync(mailMessage);
+            Console.WriteLine($"Email should b sent to {patient.Email}");
+        }
+        catch (Exception ex)
+        {
+            // Handle exception (log or display error message)
+            Console.WriteLine($"Error sending email: {ex.Message}");
+        }
+    }
+
+    private async Task SendTestEmail()
+    {
+        await MailService.SendEmailAsync("test@example.com", "Test Subject", "This is a test email.");
+    }
+
+    private string GetConfirmationEmailBody(Appointment appointment)
+    {
+        return $"Dear {patient.Name},\n\nYour appointment has been confirmed. Details:\n\n" +
+               $"Caregiver: {appointment.Caregiver.Name}\n" +
+               $"Service: {appointment.Service}\n" +
+               $"Start Time: {appointment.StartTime}\n" +
+               $"End Time: {appointment.EndTime}\n" +
+               $"Description: {description}\n\n" +
+               "Thank you for choosing our services.";
     }
 
 }
